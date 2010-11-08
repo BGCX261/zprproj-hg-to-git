@@ -5,6 +5,9 @@ from django.conf.urls.defaults import *
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    #traveler app wil handle its requests on its own
+    (r'^traveler/', include('server.traveler.urls'),
+    
     # Example:
     # (r'^server/', include('server.foo.urls')),
 
