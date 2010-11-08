@@ -2,8 +2,8 @@ from django.db import models
 
 
 
-#describes one city    
-class City(models.Model):       
+class City(models.Model):
+    """Describes one city"""       
     name = models.CharField(max_length = 50, unique=True)
     xcoord = models.PositiveIntegerField()
     ycoord = models.PositiveIntegerField()
@@ -16,8 +16,9 @@ class City(models.Model):
         return self.name + '(' + xcoord + ',' + ycoord + ')'
 
 
-#describes list of the cities, which have to be visited by traveler
-class CityList(models.Model):      
+
+class CityList(models.Model):  
+    """describes list of the cities, which have to be visited by traveler"""    
     name = models.CharField(max_length = 50, unique=True)
     
     #one list can have multiple cities and every city can by included
@@ -28,20 +29,24 @@ class CityList(models.Model):
         return self.name
     
     
-    #add previously created city to the list    
+
     def addCity(self, city):
+        """add previously created city to the list"""
         cil = CityInList(city = city, cityList = self)
         cil.save()
         
-    #remove city from the list    
+    
     def delCity(self, city):
+        """remove city from the list"""
         cil = CityInList.objects.get(city = city, cityList = self)
         cil.delete()
         
     
     
-#describes cities in lists memberships
+
 class CityInList(models.Model):
+    """describes cities in lists memberships"""
+    
     POSITION_CHOICES = (
         ('F', 'first'),
         ('L', 'last'),
