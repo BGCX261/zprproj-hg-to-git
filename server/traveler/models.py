@@ -41,16 +41,30 @@ class CityList(models.Model):
         cil = CityInList.objects.get(city = city, cityList = self)
         cil.delete()
         
+    def getCities(self):
+        """get all cities belonging to this city list
+        
+        cities returned are sorted by the position field, which means the first
+        city in returned list will be a city marked as start point for traveler
+        and the last one will be city marked as traveler's destination point
+        """
+        
+        cities = CityInList.objects.order_by('position').filter(cityList = self)
+        return cities
+
     
     
 
 class CityInList(models.Model):
     """describes cities in lists memberships"""
     
+    #the naming here (exactly the real, short names) is important since it allows
+    #to easily sort some group of cities in order where first city is 'really'
+    #first at the list, and last city is 'really' last one
     POSITION_CHOICES = (
-        ('F', 'first'),
-        ('L', 'last'),
-        ('M', 'middle'),
+        ('a', 'first'),
+        ('b', 'middle'),        
+        ('c', 'last'),
     )
     
     #we have to explicitly tell about foreign keys we will use
