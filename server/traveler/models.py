@@ -8,12 +8,14 @@ class City(models.Model):
     xcoord = models.PositiveIntegerField()
     ycoord = models.PositiveIntegerField()
     
-    #the coordinates of the city must be uniqe (we do not alow two cities in
-    #one place)
-    unique_together = ('xcoord', 'ycoord')
+
+    class Meta:
+        #the coordinates of the city must be uniqe (we do not alow two cities in
+        #one place)    
+        unique_together = ('xcoord', 'ycoord')
     
     def __unicode__(self):
-        return self.name + '(' + xcoord + ',' + ycoord + ')'
+        return self.name + '(' + str(self.xcoord) + ',' + str(self.ycoord) + ')'
 
 
 
@@ -62,9 +64,9 @@ class CityInList(models.Model):
     #to easily sort some group of cities in order where first city is 'really'
     #first at the list, and last city is 'really' last one
     POSITION_CHOICES = (
-        ('a', 'first'),
-        ('b', 'middle'),        
-        ('c', 'last'),
+        ('1', 'first'),
+        ('2', 'middle'),        
+        ('3', 'last'),
     )
     
     #we have to explicitly tell about foreign keys we will use
