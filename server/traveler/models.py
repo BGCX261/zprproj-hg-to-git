@@ -16,6 +16,9 @@ class City(models.Model):
     
     def __unicode__(self):
         return self.name + '(' + str(self.xcoord) + ',' + str(self.ycoord) + ')'
+        
+    def getInfo(self):
+        return {'name': self.name, 'x': self.xcoord, 'y': self.ycoord}
 
 
 
@@ -47,7 +50,7 @@ class CityList(models.Model):
             
     def delCity(self, city):
         """remove city from the list"""
-        self.cities.get(city).delete()
+        self.cities.remove(city)
 
         
     def getCities(self):
@@ -57,18 +60,28 @@ class CityList(models.Model):
         
     @property
     def first(self):
-        """start point for traveler"""
+        """start point for traveler
+        
+        if you set this to a city not included in this list yet, it will be added
+        """
         return self.firstCity
+        
        
         
     @first.setter
     def first(self, city):
+        if city not in self.getCities():
+            self.addCity(city)
         self.firstCity = city
        
         
     @property
     def last(self):
-        """destination point for traveler"""
+        """destination point for traveler
+        
+        if you set this to a city not included in this list yet, it will be added
+        """
+        
         if self.lastCity is not None:
             return self.lastCity
         else:
@@ -79,11 +92,36 @@ class CityList(models.Model):
             
     @last.setter
     def last(self, city):
+        if city not in self.getCities():
+            self.addCity(city)    
         self.lastCity = city
+        
+        
+    def getInfo(self):
+        """returns basic information about the list"""
+        return {'name': self.name, 'count': self.cities.count()}
+        
+        
+    def getCitiesInfo(self):
+        """returns information about cities included in the list"""
+        info = []
+        for c in self.getCities():
+            if c == self.first:
+                pos = 'first'
+            elif c == self.last:
+                pos = 'last'
+            else:
+                pos = 'middle'
+                
+            cityInfo = c.getInfo()
+            cityInfo['position'] = pos
+            
+            info.append(cityInfo)
+            
+        return info
         
         
     def empty(self):
         """checks if list is empty"""
-        return self.cities.count() == 0
-
+        return self.cities.count() == 0        
 
