@@ -45,11 +45,11 @@ def getCitiesInList(list_id):
         cities.append(c.getInfo())
     return cities
 
-def setFirstCity(list_id, city_id)
+def setFirstCity(list_id, city_id):
     city = Cities.objects.get(id = city_id)
     CityList.objects.get(id = list_id).first = city
     
-def setLastCity(list_id, city_id)
+def setLastCity(list_id, city_id):
     city = Cities.objects.get(id = city_id)
     CityList.objects.get(id = list_id).last = city
 
