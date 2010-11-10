@@ -106,9 +106,9 @@ class CityList(models.Model):
         """returns information about cities included in the list"""
         info = []
         for c in self.getCities():
-            if c == self.first:
+            if c.pk == self.first.pk:
                 pos = 'first'
-            elif c == self.last:
+            elif c.pk == self.last.pk:
                 pos = 'last'
             else:
                 pos = 'middle'

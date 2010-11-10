@@ -39,11 +39,8 @@ def getCitiesLists():
     return lists
 
 def getCitiesInList(list_id):
-    cities = []
     cityList = CityList.objects.get(id = list_id)
-    for c in cityList.getCities():
-        cities.append(c.getInfo())
-    return cities
+    return cityList.getCitiesInfo()
 
 def setFirstCity(list_id, city_id):
     city = Cities.objects.get(id = city_id)

@@ -1,4 +1,5 @@
 from pyamf.remoting.gateway.django import DjangoGateway
+import iface
 
 
 def echo(data):
@@ -12,7 +13,7 @@ services = {
     'traveler.echo'             : echo,
     'traveler.addCity'          : iface.addCity,
     'traveler.addCityList'      : iface.addCityList,
-    'traveler.addCityToList'    : iface.addCityToList
+    'traveler.addCityToList'    : iface.addCityToList,
     'traveler.delCity'          : iface.delCity,
     'traveler.delCityList'      : iface.delCityList,
     'traveler.delCityFromList'  : iface.delCityFromList,
