@@ -20,8 +20,7 @@ services = {
     'traveler.getCities'        : iface.getCities,
     'traveler.getCitiesLists'   : iface.getCitiesLists,
     'traveler.getCitiesInList'  : iface.getCitiesInList,
-    'traveler.setFirstCity'     : iface.setFirstCity,
-    'traveler.setLastCity'      : iface.setLastCity,
+    'traveler.setHomeCity'      : iface.setFirstCity,
 }
     
 

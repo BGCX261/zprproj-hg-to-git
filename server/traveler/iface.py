@@ -42,11 +42,8 @@ def getCitiesInList(list_id):
     cityList = CityList.objects.get(id = list_id)
     return cityList.getCitiesInfo()
 
-def setFirstCity(list_id, city_id):
+def setHomeCity(list_id, city_id):
     city = Cities.objects.get(id = city_id)
-    CityList.objects.get(id = list_id).first = city
-    
-def setLastCity(list_id, city_id):
-    city = Cities.objects.get(id = city_id)
-    CityList.objects.get(id = list_id).last = city
+    CityList.objects.get(id = list_id).home = city
+
 

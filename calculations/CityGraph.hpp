@@ -1,6 +1,8 @@
 #include <boost/graph/adjacency_matrix.hpp>
 #include <map>
 
+#include "CityList.hpp"
+
 using namespace boost;
 
 class CityGraph
@@ -8,11 +10,11 @@ class CityGraph
     public:
         typedef double Distance;
         
-        CityGraph(int size) : g_(size){}
+        CityGraph(int n) : g_(n) {}
         
-        void addEdge(int city1_id, int city2_id, Distance dist)
+        CityGraph(const CityList &list) : g_(list.getSize())
         {
-            add_edge(city1_id, city2_id, EdgeProperty(dist), g_);
+            
         }
         
         Distance getDistance(int city1_id, int city2_id) const
@@ -23,6 +25,10 @@ class CityGraph
             return get(index, e);
         }
         
+        void addEdge(int city1_id, int city2_id, Distance dist)
+        {
+            add_edge(city1_id, city2_id, EdgeProperty(dist), g_);
+        }        
     
     private:
 

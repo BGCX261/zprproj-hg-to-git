@@ -28,9 +28,8 @@ class CityList(models.Model):
     
     #one list can have multiple cities and every city can by included
     #in many lists.
-    cities     = models.ManyToManyField(City)
-    firstCity  = models.ForeignKey(City, related_name = 'firstCity', null=True)
-    lastCity   = models.ForeignKey(City, related_name = 'lastCity', null=True)
+    cities      = models.ManyToManyField(City)
+    homeCity    = models.ForeignKey(City, related_name = 'home', null=True)
     
     
     def __unicode__(self):
@@ -44,13 +43,16 @@ class CityList(models.Model):
         (start point for traveler)
         """
         self.cities.add(city)
-        if self.firstCity is None:
-            self.firstCity = city
+        if self.homeCity is None:
+            self.homeCity = city
        
             
     def delCity(self, city):
         """remove city from the list"""
         self.cities.remove(city)
+        if self.homeCity is None and not self.empty():
+            self.homeCity = getCities()[0]
+            
 
         
     def getCities(self):
@@ -59,42 +61,20 @@ class CityList(models.Model):
         
         
     @property
-    def first(self):
+    def home(self):
         """start point for traveler
         
         if you set this to a city not included in this list yet, it will be added
         """
-        return self.firstCity
+        return self.homeCity
         
        
         
-    @first.setter
-    def first(self, city):
+    @home.setter
+    def home(self, city):
         if city not in self.getCities():
             self.addCity(city)
-        self.firstCity = city
-       
-        
-    @property
-    def last(self):
-        """destination point for traveler
-        
-        if you set this to a city not included in this list yet, it will be added
-        """
-        
-        if self.lastCity is not None:
-            return self.lastCity
-        else:
-            #if last city was not set assume that start point is also a finish
-            #point
-            return self.firstCity
-       
-            
-    @last.setter
-    def last(self, city):
-        if city not in self.getCities():
-            self.addCity(city)    
-        self.lastCity = city
+        self.homeCity = city
         
         
     def getInfo(self):
@@ -106,10 +86,8 @@ class CityList(models.Model):
         """returns information about cities included in the list"""
         info = []
         for c in self.getCities():
-            if c.pk == self.first.pk:
-                pos = 'first'
-            elif c.pk == self.last.pk:
-                pos = 'last'
+            if c.pk == self.home.pk:
+                pos = 'home'
             else:
                 pos = 'middle'
                 
