@@ -50,6 +50,15 @@ class CityList(models.Model):
     def delCity(self, city):
         """remove city from the list"""
         self.cities.remove(city)
+        
+        """
+        if self.homeCity == city and self.empty():
+            self.homeCity = None
+        elif self.homeCity == city and not self.empty():
+            self.homeCity = self.getCities()[0]
+
+        #Code below doesn't work. There is a proposed solution above.
+        """
         if self.homeCity is None and not self.empty():
             self.homeCity = getCities()[0]
             

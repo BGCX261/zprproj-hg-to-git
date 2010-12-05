@@ -22,7 +22,7 @@ def delCityList(list_id):
     CityList.objects.get(id = list_id).delete()
 
 def delCityFromList(city_id, list_id):
-    city = Cities.objects.get(id = city_id)
+    city = City.objects.get(id = city_id)
     cityList = CityList.objects.get(id = list_id)
     cityList.delCity(city)
     
@@ -43,7 +43,7 @@ def getCitiesInList(list_id):
     return cityList.getCitiesInfo()
 
 def setHomeCity(list_id, city_id):
-    city = Cities.objects.get(id = city_id)
+    city = City.objects.get(id = city_id)
     CityList.objects.get(id = list_id).home = city
 
 
