@@ -290,12 +290,16 @@ class InterfaceTest(TestCase):
         addCityToList(clid1, cid1)
         addCityToList(clid1, cid2)
 
-        cities = [City.objects.get(id = cid1), City.objects.get(id = cid2)]
+        warsawInfo = City.objects.get(id = cid1).getInfo()
+        warsawInfo['position'] = 'home'
+        krakowInfo = City.objects.get(id = cid2).getInfo()
+        krakowInfo['position'] = 'middle'
+        cities = [warsawInfo, krakowInfo]
         self.assertListEqual(getCitiesInList(clid1), cities)
 
         #checks if a list of cities is still correct after deleting one city
         delCityFromList(clid1, cid1)
-        cities = [City.objects.get(id = cid2)]
+        cities = [krakowInfo]
         self.assertListEqual(getCitiesInList(clid1), cities)
 
 
@@ -324,7 +328,9 @@ class InterfaceTest(TestCase):
         
         clist = CityList.objects.get(id = clid)        
         self.assertEqual(krakow, clist.home)
-        self.assertIn(warsaw, getCitiesInList(clid))
+        warsawInfo = warsaw.getInfo()
+        warsawInfo['position'] = 'middle'
+        self.assertIn(warsawInfo, getCitiesInList(clid))
 
         
 
