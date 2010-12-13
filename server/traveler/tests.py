@@ -213,12 +213,13 @@ class InterfaceTest(TestCase):
         self.assertEqual(clistInfo['name'], 'clist')
         self.assertEqual(clistInfo['count'], 1)
 
+        clist = CityList.objects.get(id = clid)
         #checks if the added city is home
         self.assertEqual(clist.home, warsaw)
 
         #checks if next added city is not home
         cid2 = addCity('Krakow', 25, 30)
-        addCityToList(cid2, clid)
+        addCityToList(clid, cid2)
         krakow = City.objects.get(id = cid2)
         self.assertNotEqual(clist.home, krakow)
 
@@ -250,6 +251,8 @@ class InterfaceTest(TestCase):
         clist.save()
         clist.addCity(warsaw)
         delCityFromList(cid, clid)
+        
+        clist = CityList.objects.get(id = clid)
         self.assertTrue(clist.empty())
 
         #checks if empty list's home is None
@@ -311,11 +314,15 @@ class InterfaceTest(TestCase):
 
         #checks if the first added city becomes home
         setHomeCity(clid, cid1)
+        clist = CityList.objects.get(id = clid)
+                
         self.assertEqual(warsaw, clist.home)
 
         #checks if the next added city becomes home and
         #the recent home still belongs to the list
         setHomeCity(clid, cid2)
+        
+        clist = CityList.objects.get(id = clid)        
         self.assertEqual(krakow, clist.home)
         self.assertIn(warsaw, getCitiesInList(clid))
 

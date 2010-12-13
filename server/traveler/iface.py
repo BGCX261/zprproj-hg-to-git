@@ -45,6 +45,9 @@ def getCitiesInList(list_id):
 
 def setHomeCity(list_id, city_id):
     city = City.objects.get(id = city_id)
-    CityList.objects.get(id = list_id).home = city
+    cityList = CityList.objects.get(id = list_id)
+    cityList.home = city
+    cityList.save()
+    
 
 
