@@ -24,12 +24,12 @@ class City(models.Model):
 
 class CityList(models.Model):  
     """describes list of the cities, which have to be visited by traveler"""    
-    name        = models.CharField(max_length = 50, unique=True)
+    name        = models.CharField(max_length = 50, unique=True, null=False)
     
     #one list can have multiple cities and every city can by included
     #in many lists.
     cities      = models.ManyToManyField(City)
-    homeCity    = models.ForeignKey(City, related_name = 'home', null=True)
+    homeCity    = models.ForeignKey(City, related_name = 'home_city', null=True)
     
     
     def __unicode__(self):
@@ -42,6 +42,7 @@ class CityList(models.Model):
         If list was empty this city is automaticaly set as first city
         (start point for traveler)
         """
+
         self.cities.add(city)
         if self.homeCity is None:
             self.homeCity = city
@@ -51,16 +52,16 @@ class CityList(models.Model):
         """remove city from the list"""
         self.cities.remove(city)
         
-        """
+        
         if self.homeCity == city and self.empty():
             self.homeCity = None
         elif self.homeCity == city and not self.empty():
             self.homeCity = self.getCities()[0]
 
         #Code below doesn't work. There is a proposed solution above.
-        """
-        if self.homeCity is None and not self.empty():
-            self.homeCity = getCities()[0]
+        
+        #if self.homeCity is None and not self.empty():
+        #    self.homeCity = getCities()[0]
             
 
         

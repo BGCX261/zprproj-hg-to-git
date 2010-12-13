@@ -51,6 +51,7 @@ class CityGraph
         PCityList tsp_solve()
         {
             typedef vector<Vertex> Container;
+            
             Container c;
             metric_tsp_approx_tour(graph_, back_inserter(c));
             

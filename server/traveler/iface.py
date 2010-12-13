@@ -10,10 +10,11 @@ def addCityList(name):
     cityList.save()
     return cityList.id
     
-def addCityToList(city_id, list_id):
+def addCityToList(list_id, city_id):
     city = City.objects.get(id = city_id)
     cityList = CityList.objects.get(id = list_id)
     cityList.addCity(city)
+    cityList.save()
     
 def delCity(city_id):
     City.objects.get(id = city_id).delete()
