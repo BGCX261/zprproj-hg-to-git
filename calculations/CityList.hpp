@@ -28,7 +28,7 @@ class CityList
         {
             double loop_val = 0.0;
             if(!cities_.empty())
-                distance(cities_.back(), cities_.front());
+                loop_val = distance(cities_.back(), cities_.front());
                 
             return std::inner_product(  cities_.begin(), cities_.end() - 1,
                 cities_.begin() + 1, loop_val, std::plus<double>(),

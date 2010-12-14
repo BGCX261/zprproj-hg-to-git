@@ -25,7 +25,7 @@ class CityGraph
             builded_(false)
         {}
         
-        void optimize()
+        PCityList optimize()
         {
             if(!builded_)
             {
@@ -33,7 +33,7 @@ class CityGraph
                 builded_ = true;
             }
                 
-            tsp_solve();
+            return tsp_solve();
         }
         
     
@@ -56,7 +56,7 @@ class CityGraph
             metric_tsp_approx_tour(graph_, back_inserter(c));
             
             PCityList optimized_list(new CityList);
-            for (Container::iterator ci = c.begin(); ci != c.end(); ++ci)
+            for (Container::iterator ci = c.begin(); ci != c.end() - 1; ++ci)
             {
                optimized_list->addCity(origList_.getCities()[*ci]);
             }
