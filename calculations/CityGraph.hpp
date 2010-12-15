@@ -25,7 +25,7 @@ class CityGraph
             builded_(false)
         {}
         
-        PCityList optimize()
+        PCityList tspApprox()
         {
             if(!builded_)
             {
@@ -33,7 +33,7 @@ class CityGraph
                 builded_ = true;
             }
                 
-            return tsp_solve();
+            return computeTspApprox();
         }
         
     
@@ -48,7 +48,7 @@ class CityGraph
         typedef property_map<Graph, vertex_index_t>::type VertexMap; 
         typedef property_map<Graph, edge_weight_t>::type WeightMap;  
         
-        PCityList tsp_solve()
+        PCityList computeTspApprox()
         {
             typedef vector<Vertex> Container;
             
