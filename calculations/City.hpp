@@ -19,8 +19,8 @@ class City
         
         double distance(const City &dest_city) const
         {
-            City::Coord dx = getX() - dest_city.getX();
-            City::Coord dy = getY() - dest_city.getY();
+            Coord dx = getX() - dest_city.getX();
+            Coord dy = getY() - dest_city.getY();
             
             return sqrt(dx*dx + dy*dy);
         }
