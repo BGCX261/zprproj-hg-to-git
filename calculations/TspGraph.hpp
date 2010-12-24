@@ -9,7 +9,8 @@
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/metric_tsp_approx.hpp>
 
-#include "TspRoute.hpp"
+#include "Route.hpp"
+#include "Tsp.hpp"
 
 
 
@@ -19,18 +20,26 @@ using namespace std;
 class TspGraph
 {
     public:
-        TspGraph(const TspRoute::Route &route) :
-            route_(route),
-            graph_(route.size())
+        TspGraph(const Route::Cities &cities) :
+            cities_(cities),
+            graph_(cities.size())
         {
             buildGraph();      
         }
         
-        TspRoute::PRoute optimizedRoute()
+        Tsp::PResult optimizeRoute()
         {                
-            return computeTspApprox();
-        }
-        
+            typedef vector<Vertex> Container;
+            
+            Container c;
+            metric_tsp_approx_tour(graph_, back_inserter(c));
+            
+            Tsp::PResult result(new Tsp::Result);
+            for (Container::iterator ci = c.begin(); ci != c.end() - 1; ++ci)
+               result->push_back(cities_[*ci].getId());
+
+            return result;
+        }        
     
     private:
     
@@ -60,11 +69,11 @@ class TspGraph
                 {
                     if (dst != src)
                     {                                
-                        PCity src_city = route_[vmap[*src]];
-                        PCity dst_city = route_[vmap[*dst]];
+                        const City &src_city = cities_[vmap[*src]];
+                        const City &dst_city = cities_[vmap[*dst]];
                         
                         tie(e, inserted) = add_edge(*src, *dst, graph_);
-                        wmap[e] = src_city->distance(*dst_city);
+                        wmap[e] = src_city.distance(dst_city);
                     }
 
                 }
@@ -72,26 +81,12 @@ class TspGraph
             }
         }         
         
-        TspRoute::PRoute computeTspApprox()
-        {
-            typedef vector<Vertex> Container;
-            
-            Container c;
-            metric_tsp_approx_tour(graph_, back_inserter(c));
-            
-            TspRoute::PRoute optimized_route(new TspRoute::Route);
-            for (Container::iterator ci = c.begin(); ci != c.end() - 1; ++ci)
-            {
-               optimized_route->push_back(route_[*ci]);
-            }
 
-            return optimized_route;
-        }
         
         
 
          
-        const TspRoute::Route &route_;
+        const Route::Cities &cities_;
         Graph graph_;       
 };
 

@@ -5,9 +5,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include "TspRoute.hpp"
+#include "Tsp.hpp"
 
-typedef boost::shared_ptr<TspRoute> PTspRoute;
+typedef boost::shared_ptr<Tsp> PTsp;
 
 class TspManager
 {
@@ -20,18 +20,13 @@ class TspManager
             return manager;
         }
         
-        int addTsp(PTspRoute tsp)
+        int solve(PTsp tsp)
         {
             tspc_.push_back(tsp);
             
-            boost::thread optimizing_thread(boost::bind(&TspRoute::optimize, tsp));
+            boost::thread optimizing_thread(boost::bind(&Tsp::solve, tsp));
             
             return tspc_.size() - 1;
-        }
-        
-        PTspRoute getTsp(int tsp_id)
-        {
-            return tspc_[tsp_id];
         }
         
            
@@ -39,7 +34,7 @@ class TspManager
         TspManager(){}
         TspManager(const TspManager&);       
         
-        std::vector<PTspRoute> tspc_;        
+        std::vector<PTsp> tspc_;        
 };
 
 #endif
