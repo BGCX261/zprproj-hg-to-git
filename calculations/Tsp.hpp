@@ -7,15 +7,16 @@
 
 #include "Route.hpp"
 
+typedef boost::shared_ptr<Route> PRoute;
 
 class Tsp
 {
     public:
-        typedef Route::CitiesIds Result;    
-        typedef boost::shared_ptr<Route::CitiesIds> PResult;
+        typedef Route::CitiesIds Result;
+        typedef boost::shared_ptr<Route::CitiesIds> PResult;            
         enum State { NONE, SOLVING, SOLVED };
         
-        Tsp(const Route &route);
+        Tsp(PRoute route);
         
         void solve();
                 
@@ -23,7 +24,9 @@ class Tsp
         State getState() const;
         
     private:
-        const Route &route_;
+
+            
+        const PRoute route_;
         State state_;
         PResult result_;        
         

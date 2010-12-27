@@ -9,11 +9,13 @@ void Route::addCity(const City &city)
 
 const Route::Cities& Route::getCities() const
 {
+    mutex_.lock_shared();
     return cities_;
 }
 
 const Route::CitiesIds& Route::getCitiesIds() const
 {
+    mutex_.lock_shared();
     return citiesIds_;
 }
 

@@ -1,0 +1,10 @@
+target = 'calc'
+source = ['Calc_py.cpp', 'Tsp.cpp', 'Route.cpp', 'TspPy.cpp']
+
+env = Environment()
+env.Append(LINKFLAGS = ['-Wl,-soname,' + target])
+env.Append(CPPPATH = ['/usr/include/python2.7'])
+env.Append(LIBS = ['boost_python', 'boost_thread'])
+
+shared = env.SharedLibrary(LIBPREFIX='', target = target, source = source)
+

@@ -11,9 +11,7 @@ typedef boost::shared_ptr<Tsp> PTsp;
 
 class TspManager
 {
-    public:       
-
-        
+    public:          
         static TspManager& getInstance()
         {
             static TspManager manager;
@@ -29,6 +27,10 @@ class TspManager
             return tspc_.size() - 1;
         }
         
+        PTsp getTsp(int tsp_id)
+        {
+            return tspc_[tsp_id];
+        }        
            
     private:
         TspManager(){}
