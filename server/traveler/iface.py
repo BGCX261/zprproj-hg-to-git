@@ -1,33 +1,33 @@
-from models import City, CityList
+from models import City, Route
 from calc import Tsp, TspManager, TspState
 from tsps import Tsps
 
 def addCity(name, x, y):
-    city = City(name = name, xcoord = x, ycoord = y)
+    city = City(name = name, xpos = x, ypos = y)
     city.save()
     return city.id
     
-def addCityList(name):
-    cityList = CityList(name = name)
-    cityList.save()
-    return cityList.id
+def addRoute(name):
+    route = Route(name = name)
+    route.save()
+    return route.id
     
-def addCityToList(list_id, city_id):
+def addCityToRoute(route_id, city_id):
     city = City.objects.get(id = city_id)
-    cityList = CityList.objects.get(id = list_id)
-    cityList.addCity(city)
-    cityList.save()
+    route = Route.objects.get(id = route_id)
+    route.addCity(city)
+    route.save()
     
 def delCity(city_id):
     City.objects.get(id = city_id).delete()
 
-def delCityList(list_id):
-    CityList.objects.get(id = list_id).delete()
+def delRoute(list_id):
+    Route.objects.get(id = list_id).delete()
 
-def delCityFromList(city_id, list_id):
+def delCityFromRoute(city_id, route_id):
     city = City.objects.get(id = city_id)
-    cityList = CityList.objects.get(id = list_id)
-    cityList.delCity(city)
+    route = Route.objects.get(id = route_id)
+    route.delCity(city)
     
 def getCities():
     cities = []
@@ -35,26 +35,26 @@ def getCities():
         cities.append(c.getInfo())
     return cities
     
-def getCitiesLists():
-    lists = []
-    for cl in CityList.objects.all():
-        lists.append(cl.getInfo())
-    return lists
+def getRoutes():
+    routes = []
+    for r in Route.objects.all():
+        routes.append(r.getInfo())
+    return routes
 
-def getCitiesInList(list_id):
-    cityList = CityList.objects.get(id = list_id)
-    return cityList.getCitiesInfo()
+def getCitiesInRoute(route_id):
+    route = Route.objects.get(id = route_id)
+    return route.getCitiesInfo()
 
-def setHomeCity(list_id, city_id):
+def setHomeCity(route_id, city_id):
     city = City.objects.get(id = city_id)
-    cityList = CityList.objects.get(id = list_id)
-    cityList.home = city
-    cityList.save()
+    route = Route.objects.get(id = route_id)
+    route.home = city
+    route.save()
     
-def tspSolve(list_id):
-    city_list = CityList.objects.get(id=list_id)
-    tsp = Tsp(city_list)
-    tsp.listId = city_list.id
+def tspSolve(route_id):
+    route = Route.objects.get(id=route_id)
+    tsp = Tsp(route)
+    tsp.routeId = route.id
     
     tsp_id = TspManager().solve(tsp)
     Tsps().addTsp(tsp)
@@ -67,13 +67,12 @@ def tspState(tsp_id):
 def tspResult(tsp_id):
     tsp = Tsps().getTsp(tsp_id)
     if tsp.getState() == TspState.SOLVED:
-        city_list = CityList.objects.get(id = tsp.listId)
-        city_list.cities.clear()
-        
+        route = Route.objects.get(id = tsp.routeId)
+        route.cities.clear()        
         result = tsp.getResult()
         for i in result:
-            city_list.addCity(City.objects.get(id=i))
-        city_list.save()
+            route.addCity(City.objects.get(id=i))
+        route.save()
         Tsps().delTsp(tsp_id)
         
     return result
