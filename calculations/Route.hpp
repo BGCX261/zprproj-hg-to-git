@@ -26,7 +26,6 @@ class Route
         Cities cities_;
         
         mutable boost::shared_mutex mutex_;
-
 };
 
 #endif //ROUTE_HPP

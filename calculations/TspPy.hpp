@@ -13,9 +13,12 @@ class TspPy
         TspPy(PTsp tsp_ptr);        
                       
         boost::python::list getResult() const;
+        
+        Tsp::TspId getId() const;
         Tsp::State getState() const;
         
         void solve();
+        PTsp getTsp() const;
         
     private:
         PTsp tspPtr_;

@@ -1,8 +1,12 @@
 #include "Tsp.hpp"
 #include "TspGraph.hpp"
 
-Tsp::Tsp(PRoute route) : route_(route)
+Tsp::Tsp(PRoute route) :
+    route_(route),
+    id_(0),
+    state_(NONE)
 {}
+
 
 void Tsp::solve()
 {
@@ -17,6 +21,7 @@ void Tsp::solve()
     setState(SOLVED);
 }
 
+
 const Tsp::Result& Tsp::getResult() const
 {
     boost::mutex::scoped_lock lock(resultMutex_);
@@ -25,11 +30,12 @@ const Tsp::Result& Tsp::getResult() const
     return *result_;
 }
 
-Tsp::State Tsp::getState() const
+
+void Tsp::setId(TspId id)
 {
-    boost::mutex::scoped_lock lock(stateMutex_);
-    return state_;
+    id_ = id;
 }
+
 
 void Tsp::setState(State state)
 {
@@ -37,3 +43,17 @@ void Tsp::setState(State state)
     state_ = state;
     stateMutex_.unlock();
 }
+
+
+Tsp::State Tsp::getState() const
+{
+    boost::mutex::scoped_lock lock(stateMutex_);
+    return state_;
+}
+
+
+Tsp::TspId Tsp::getId() const
+{
+    return id_;
+}
+

@@ -20,6 +20,11 @@ boost::python::list TspPy::getResult() const
     return python_result;
 }
 
+Tsp::TspId TspPy::getId() const
+{
+    return tspPtr_->getId();
+}
+
 
 Tsp::State TspPy::getState() const
 {
@@ -28,7 +33,12 @@ Tsp::State TspPy::getState() const
 
 void TspPy::solve()
 {
-    TspManager::getInstance().solve(tspPtr_);
+    tspPtr_->solve();
+}
+
+PTsp TspPy::getTsp() const
+{
+    return tspPtr_;
 }
 
 
@@ -52,7 +62,9 @@ void TspPy::addCities(PRoute route, const boost::python::list &python_cities) co
 PRoute TspPy::getRoute(const boost::python::object &python_route) const
 {
     PRoute route(new Route);
-    addCities(route, static_cast<boost::python::list>(python_route.attr("cities")));
+    boost::python::object many_related_manager = python_route.attr("cities");
+    boost::python::list python_cities = static_cast<boost::python::list>(many_related_manager.attr("all")());
+    addCities(route, python_cities);
     return route;
 }         
 

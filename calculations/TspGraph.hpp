@@ -1,5 +1,5 @@
-#ifndef TSPGRAPH_HPP
-#define TSPGRAPH_HPP
+#ifndef TSP_GRAPH_HPP
+#define TSP_GRAPH_HPP
 
 #include <utility>
 #include <vector>

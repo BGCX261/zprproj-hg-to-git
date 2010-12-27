@@ -1,5 +1,5 @@
 target = 'calc'
-source = ['Calc_py.cpp', 'Tsp.cpp', 'Route.cpp', 'TspPy.cpp']
+source = ['Calc_py.cpp', 'Tsp.cpp', 'Route.cpp', 'TspManager.cpp', 'TspPy.cpp']
 
 env = Environment()
 env.Append(LINKFLAGS = ['-Wl,-soname,' + target])

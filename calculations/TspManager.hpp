@@ -1,42 +1,27 @@
-#ifndef TSPMANAGER_HPP
-#define TSPMANAGER_HPP
+#ifndef TSP_MANAGER_HPP
+#define TSP_MANAGER_HPP
 
-
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include "Tsp.hpp"
+#include "TspQueue.hpp"
 
-typedef boost::shared_ptr<Tsp> PTsp;
 
 class TspManager
 {
     public:          
-        static TspManager& getInstance()
-        {
-            static TspManager manager;
-            return manager;
-        }
+        static TspManager& getInstance();
         
-        int solve(PTsp tsp)
-        {
-            tspc_.push_back(tsp);
-            
-            boost::thread optimizing_thread(boost::bind(&Tsp::solve, tsp));
-            
-            return tspc_.size() - 1;
-        }
-        
-        PTsp getTsp(int tsp_id)
-        {
-            return tspc_[tsp_id];
-        }        
+        Tsp::TspId solve(PTsp tsp);
            
-    private:
-        TspManager(){}
-        TspManager(const TspManager&);       
-        
-        std::vector<PTsp> tspc_;        
+    private:    
+        TspManager(int threads_num);
+        TspManager(const TspManager&);
+		
+		void threadFunc();
+		
+        TspQueue tspQueue_;
+		boost::thread_group pool_;
 };
 
 #endif
