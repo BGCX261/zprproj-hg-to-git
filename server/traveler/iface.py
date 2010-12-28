@@ -68,7 +68,8 @@ def tspResult(tsp_id):
     tsp = Tsps().getTsp(tsp_id)
     if tsp.getState() == TspState.SOLVED:
         route = Route.objects.get(id = tsp.routeId)
-        route.cities.clear()        
+        route.cities.clear() 
+        route.home = None       
         result = tsp.getResult()
         for i in result:
             route.addCity(City.objects.get(id=i))
