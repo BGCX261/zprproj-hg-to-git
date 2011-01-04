@@ -12,15 +12,18 @@ def echo(data):
 services = {
     'traveler.echo'             : echo,
     'traveler.addCity'          : iface.addCity,
-    'traveler.addCityList'      : iface.addCityList,
-    'traveler.addCityToList'    : iface.addCityToList,
+    'traveler.addRoute'         : iface.addRoute,
+    'traveler.addCityToRoute'   : iface.addCityToRoute,
     'traveler.delCity'          : iface.delCity,
-    'traveler.delCityList'      : iface.delCityList,
-    'traveler.delCityFromList'  : iface.delCityFromList,
+    'traveler.delRoute'         : iface.delRoute,
+    'traveler.delCityFromRoute' : iface.delCityFromRoute,
     'traveler.getCities'        : iface.getCities,
-    'traveler.getCitiesLists'   : iface.getCitiesLists,
-    'traveler.getCitiesInList'  : iface.getCitiesInList,
+    'traveler.getRoutes'        : iface.getRoutes,
+    'traveler.getCitiesInRoute' : iface.getCitiesInRoute,
     'traveler.setHomeCity'      : iface.setFirstCity,
+    'traveler.tspSolve'         : iface.tspSolve,
+    'traveler.tspState'         : iface.tspState,
+    'traveler.tspResult'        : iface.tspResult,
 }
     
 

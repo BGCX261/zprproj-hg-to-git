@@ -56,25 +56,24 @@ def tspSolve(route_id):
     tsp = Tsp(route)
     tsp.routeId = route.id
     
-    tsp_id = TspManager().solve(tsp)
+    TspManager().solve(tsp)
     Tsps().addTsp(tsp)
-    return tsp_id
     
-def tspState(tsp_id):
-    tsp = Tsps().getTsp(tsp_id)
+def tspState(route_id):
+    tsp = Tsps().getTsp(route_id)
     return str(tsp.getState())
 
-def tspResult(tsp_id):
-    tsp = Tsps().getTsp(tsp_id)
+def tspResult(route_id):
+    tsp = Tsps().getTsp(route_id)
     if tsp.getState() == TspState.SOLVED:
-        route = Route.objects.get(id = tsp.routeId)
+        route = Route.objects.get(id = route_id)
         route.cities.clear() 
         route.home = None       
         result = tsp.getResult()
         for i in result:
             route.addCity(City.objects.get(id=i))
         route.save()
-        Tsps().delTsp(tsp_id)
+        Tsps().delTsp(route_id)
         
     return result
 

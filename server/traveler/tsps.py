@@ -7,13 +7,13 @@ class Tsps:
             self.tsps_ = dict()  
             
         def addTsp(self, tsp):
-            self.tsps_[tsp.getId()] = tsp
+            self.tsps_[tsp.routeId()] = tsp
 
-        def getTsp(self, tsp_id):
-            return self.tsps_.get(tsp_id)
+        def getTsp(self, route_id):
+            return self.tsps_.get(route_id)
 
-        def delTsp(self, tsp_id):
-            self.tsps_.pop(tsp_id, None)   
+        def delTsp(self, route_id):
+            self.tsps_.pop(route_id, None)   
 
     def __init__(self):
         if not Tsps.instance_:
