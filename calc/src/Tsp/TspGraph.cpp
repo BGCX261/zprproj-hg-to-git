@@ -34,10 +34,10 @@ namespace calc
 
     void TspGraph::buildGraph()
     {
-        typedef typename graph_traits<Graph>::vertex_iterator VIt;   
+        typedef graph_traits<Graph>::vertex_iterator VIt;   
         
-        typedef typename property_map<Graph, vertex_index_t>::type VertexMap;
-        typedef typename property_map<Graph, edge_weight_t>::type WeightMap;
+        typedef property_map<Graph, vertex_index_t>::type VertexMap;
+        typedef property_map<Graph, edge_weight_t>::type WeightMap;
         
         WeightMap wmap = get(edge_weight, graph_);
         VertexMap vmap = get(vertex_index, graph_);
