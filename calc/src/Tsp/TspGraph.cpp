@@ -11,6 +11,9 @@ namespace calc
         cities_(cities),
         graph_(cities.size())
     {
+        if(cities_.empty())
+            throw TspGraphNoCitiesException();
+            
         buildGraph();      
     }
 

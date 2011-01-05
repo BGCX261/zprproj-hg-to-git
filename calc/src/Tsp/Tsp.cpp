@@ -22,11 +22,9 @@ namespace calc
         boost::mutex::scoped_lock lock(mutex_);
         
         if(state_ == NONE)
-        {
-            throw "Tsp state is NONE";
-        }
-        else 
-        {
+            throw TspNoResultException();
+        else
+        { 
             while(state_ != SOLVED)
                 solvedCond_.wait(lock);
         }

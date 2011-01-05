@@ -7,10 +7,17 @@
 
 #include "Route.hpp"
 
+
 namespace calc
 {
 
     typedef boost::shared_ptr<Route> PRoute;
+    
+    class TspNoResultException : public TspException
+    {
+        public:
+            TspNoResultException() : TspException("Can't get result") {}
+    };
 
     class Tsp
     {
