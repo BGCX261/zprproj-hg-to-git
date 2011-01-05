@@ -7,7 +7,10 @@ namespace calc
     Tsp::Tsp(PRoute route) :
         route_(route),
         state_(NONE)
-    {}
+    {
+        if(route_->getCitiesNumber() == 0)
+            throw TspBadRouteException();
+    }
 
 
     Tsp::State Tsp::getState() const

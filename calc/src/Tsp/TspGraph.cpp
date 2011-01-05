@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <iterator>
+#include <cassert>
 
 namespace calc
 {
@@ -11,9 +12,7 @@ namespace calc
         cities_(cities),
         graph_(cities.size())
     {
-        if(cities_.empty())
-            throw TspGraphNoCitiesException();
-            
+        assert(!cities_.empty());            
         buildGraph();      
     }
 

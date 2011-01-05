@@ -14,6 +14,12 @@ namespace calc
 
     typedef boost::shared_ptr<Route> PRoute;
     
+    class TspBadRouteException : public TspException
+    {
+        public:
+            TspBadRouteException() : TspException("Can't create tsp with no cities in route") {}
+    };  
+    
     class TspNoResultException : public TspException
     {
         public:

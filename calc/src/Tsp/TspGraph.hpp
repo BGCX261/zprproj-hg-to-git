@@ -6,17 +6,10 @@
 
 #include "Route.hpp"
 #include "Tsp.hpp"
-#include "TspException.hpp"
 
 namespace calc
 {
-    using namespace boost;
-    
-    class TspGraphNoCitiesException : public TspException
-    {
-        public:
-            TspGraphNoCitiesException() : TspException("Can't build graph for tsp solving with no cities") {}
-    };        
+    using namespace boost;          
 
     class TspGraph
     {
