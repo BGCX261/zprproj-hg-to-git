@@ -1,8 +1,8 @@
 #ifndef CALC_TSP_MANAGER_PY_HPP
 #define CALC_TSP_MANAGER_PY_HPP
 
+#include "../Tsp/TspManager.hpp"
 #include "TspPy.hpp"
-#include "TspManager.hpp"
 
 namespace calc
 {

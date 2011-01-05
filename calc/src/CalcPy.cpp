@@ -1,7 +1,7 @@
 #include <boost/python.hpp>
 
-#include "Tsp/TspPy.hpp"
-#include "Tsp/TspManagerPy.hpp"
+#include "TspPy/TspPy.hpp"
+#include "TspPy/TspManagerPy.hpp"
 
 using namespace boost::python;
 

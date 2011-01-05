@@ -57,6 +57,8 @@ namespace calc
             
             void setResult(PResult result);                          
     };
+    
+    typedef boost::shared_ptr<Tsp> PTsp;    
         
 } // namespace calc           
 

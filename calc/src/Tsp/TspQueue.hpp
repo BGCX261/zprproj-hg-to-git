@@ -12,8 +12,6 @@
 namespace calc
 {
 
-    typedef boost::shared_ptr<Tsp> PTsp;
-
     class TspQueue
     {
         public:                        

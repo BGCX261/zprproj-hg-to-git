@@ -22,9 +22,7 @@ namespace calc
             typedef property<edge_weight_t, double> EdgeProperty;
             typedef adjacency_matrix<undirectedS, no_property, EdgeProperty> Graph; 
             typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-            typedef typename graph_traits<Graph>::edge_descriptor Edge;      
-            typedef typename property_map<Graph, vertex_index_t>::type VertexMap; 
-            typedef typename property_map<Graph, edge_weight_t>::type WeightMap;                        
+            typedef typename graph_traits<Graph>::edge_descriptor Edge;                              
             
             const Route::Cities &cities_;
             

@@ -2,8 +2,7 @@
 #define CALC_TSP_PY_HPP
 
 #include <boost/python.hpp>
-#include "Tsp.hpp"
-#include "TspManager.hpp"
+#include "../Tsp/Tsp.hpp"
 
 namespace calc
 {
