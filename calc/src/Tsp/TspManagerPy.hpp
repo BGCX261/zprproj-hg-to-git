@@ -18,4 +18,4 @@ namespace calc
     
 } // namespace calc
 
-#endif CALC_TSP_MANAGER_PY_HPP
+#endif // CALC_TSP_MANAGER_PY_HPP

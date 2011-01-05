@@ -29,7 +29,7 @@ namespace calc
             }
             
             
-            Tsp::TspId push(PTsp tsp)
+            void push(PTsp tsp)
             {
 			    boost::mutex::scoped_lock lock(mutex_);
 

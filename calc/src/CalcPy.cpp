@@ -1,7 +1,7 @@
 #include <boost/python.hpp>
 
-#include "TspPy.hpp"
-#include "TspManagerPy.hpp"
+#include "Tsp/TspPy.hpp"
+#include "Tsp/TspManagerPy.hpp"
 
 using namespace boost::python;
 
@@ -16,7 +16,6 @@ BOOST_PYTHON_MODULE( calc )
 
 	boost::python::class_<calc::TspPy>("Tsp", init<boost::python::object>())
 		.def("solve", &calc::TspPy::solve)
-		.def("getId", &calc::TspPy::getId)
 		.def("getResult", &calc::TspPy::getResult)
 		.def("getState", &calc::TspPy::getState);
 		

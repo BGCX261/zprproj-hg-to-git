@@ -7,10 +7,6 @@ namespace calc
         tspPtr_(new Tsp(getRoute(python_route)))
     {}
 
-    TspPy::TspPy(PTsp tsp_ptr) :
-        tspPtr_(tsp_ptr)
-    {}
-
      
     boost::python::list TspPy::getResult() const
     {
@@ -22,21 +18,18 @@ namespace calc
         return python_result;
     }
 
-    Tsp::TspId TspPy::getId() const
-    {
-        return tspPtr_->getId();
-    }
-
 
     Tsp::State TspPy::getState() const
     {
         return tspPtr_->getState();
     }
+    
 
     void TspPy::solve()
     {
         tspPtr_->solve();
     }
+    
 
     PTsp TspPy::getTsp() const
     {

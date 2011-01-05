@@ -6,6 +6,7 @@
 #include <boost/thread/condition_variable.hpp>
 
 #include "Route.hpp"
+#include "TspException.hpp"
 
 
 namespace calc
