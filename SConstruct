@@ -27,6 +27,7 @@ def build_shared( env, build_dir):
         'Tsp/Route.cpp',
         'Tsp/Tsp.cpp',
         'Tsp/TspGraph.cpp',
+        'Tsp/TspQueue.cpp',
         'Tsp/TspManager.cpp',
         'TspPy/TspPy.cpp',
     ]

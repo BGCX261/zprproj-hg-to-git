@@ -11,9 +11,8 @@
 
 namespace calc
 {
-
-    typedef boost::shared_ptr<Route> PRoute;
-    
+    typedef boost::shared_ptr<Route> PRoute;    
+        
     class TspBadRouteException : public TspException
     {
         public:
@@ -24,7 +23,7 @@ namespace calc
     {
         public:
             TspNoResultException() : TspException("Can't get result") {}
-    };
+    };   
 
     class Tsp
     {

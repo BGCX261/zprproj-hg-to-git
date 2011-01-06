@@ -8,23 +8,40 @@
 
 namespace calc
 {
-    
+    /**
+     * Manages tsp solving in separate threads
+     */
     class TspManager
     {
         public:          
+            /* Singleton */
             static TspManager& getInstance();
             
+            /* Queues tsp for solving */
             void solve(PTsp tsp);
                
         private:   
+            /* Queue of tsps */
             TspQueue tspQueue_;
             
+            /* threads used for solving tsps */
 	        boost::thread_group pool_;
 	                 
+	        /**
+	         * private c-tor - singleton
+	         *
+	         * starts threads_num solving threads
+	         */         
             TspManager(int threads_num);
             
+            /**
+             * private cc-tor - singleton
+             */
             TspManager(const TspManager&);
 	
+	        /**
+	         * solving thread function, gets tsps from queue and solves them
+	         */
 	        void threadFunc();	
     };
         

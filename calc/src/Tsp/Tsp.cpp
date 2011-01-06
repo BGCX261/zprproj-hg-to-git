@@ -45,17 +45,18 @@ namespace calc
 
     void Tsp::solve()
     {
-        mutex_.lock();
+        boost::mutex::scoped_lock lock(mutex_);
+        if(state_ == SOLVED)
+            return;
         state_ = SOLVING;
-        mutex_.unlock();
+        lock.unlock();
         
         TspGraph tsp_graph(route_->getCities());
         PResult res = tsp_graph.optimizeRoute();
         
-        mutex_.lock();
+        lock.lock();
         result_ = res;        
         state_ = SOLVED;
-        mutex_.unlock();
     }
         
 } // namespace calc  

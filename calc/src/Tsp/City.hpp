@@ -8,26 +8,27 @@
 
 namespace calc
 {
-    // Single city
+    typedef double Distance; // Distance beetween cities
+    
+    /** Single city */
     class City
     {
         public:
             typedef int CityId; // City's identifier type
             typedef int Coord;  // City's coordinate type
-            typedef double Distance; // Distance beetween cities
             
-            /* Specifies new City at position (x, y) */
+            /** Specifies new City at position (x, y) */
             City(CityId id, Coord x, Coord y) : id_(id), coords_(x, y) {}
                
             CityId getId() const { return id_; }
             
-            /* returns x coordinate of city */
+            /** returns x coordinate of city */
             Coord getX() const { return coords_.first; }
             
-            /* returns y coordinate of city */                
+            /** returns y coordinate of city */                
             Coord getY() const { return coords_.second; }
             
-            /*  returns distance from this city to another one (dest_city), 
+            /** returns distance from this city to another one (dest_city), 
                 calculated from these cities coordinates */
             Distance distance(const City &dest_city) const
             {
@@ -38,13 +39,13 @@ namespace calc
             }
             
         private:
-            /* x,y coordinates of the city */  
+            // x,y coordinates of the city
             typedef std::pair<Coord, Coord> Coords;          
         
-            /* identifier of a city */
+            // identifier of a city
             CityId id_;
             
-            /* coordinates */
+            // coordinates
             Coords coords_;
     };
 

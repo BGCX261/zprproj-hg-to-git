@@ -9,42 +9,28 @@
 
 #include "Tsp.hpp"
 
+/** Synchronized queue of tsps */
 namespace calc
 {
 
     class TspQueue
     {
-        public:                        
-            PTsp pop()
-            {
-                boost::mutex::scoped_lock lock(mutex_);
-			    while(queue_.empty())
-				    emptyCond_.wait(lock);
-
-			    PTsp tsp = queue_.front();
-			    queue_.pop();
-			    return tsp;
-            }
+        public:   
+            /* get tsp and remove from queue, blocks if no tsp available */                     
+            PTsp pop();            
             
-            
-            void push(PTsp tsp)
-            {
-			    boost::mutex::scoped_lock lock(mutex_);
-
-                tsp->setState(Tsp::QUEUED);
-                
-			    queue_.push(tsp);            
-
-			    emptyCond_.notify_one();
-            }
+            /* insert tsp at end of queue, sets the tsp state to QUEUED */
+            void push(PTsp tsp);
             
         private:
-            typedef std::queue<PTsp> Queue;
+            typedef std::queue<PTsp> Queue; // Queue type
             
             Queue queue_;
             
+            // Mutex for synchronizing access to queue_
             mutable boost::mutex mutex_;
             
+            // Variable to wait on when the queue is empty
             mutable boost::condition_variable emptyCond_;    
     };
     
