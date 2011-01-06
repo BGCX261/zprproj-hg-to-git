@@ -25,7 +25,9 @@ namespace calc
         boost::mutex::scoped_lock lock(mutex_);
         
         if(state_ == NONE)
+        {
             throw TspNoResultException();
+        }
         else
         { 
             while(state_ != SOLVED)
@@ -34,19 +36,20 @@ namespace calc
                    
         return *result_;
     }
-
-
-    void Tsp::setState(State state)
+    
+    
+    void Tsp::setQueued()
     {
         boost::mutex::scoped_lock lock(mutex_);
-        state_ = state;
+        if(state_ == NONE)
+            state_ = QUEUED;
     }
 
 
     void Tsp::solve()
     {
         boost::mutex::scoped_lock lock(mutex_);
-        if(state_ == SOLVED)
+        if(state_ != NONE)
             return;
         state_ = SOLVING;
         lock.unlock();

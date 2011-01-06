@@ -39,7 +39,7 @@ namespace calc
                                 
             State getState() const;                
                               
-            void setState(State state);      
+            void setQueued();
             
             void solve();                           
             
@@ -54,7 +54,7 @@ namespace calc
             
             mutable boost::condition_variable solvedCond_;
             
-            void setResult(PResult result);                          
+            void setResult(PResult result);              
     };
     
     typedef boost::shared_ptr<Tsp> PTsp;    
