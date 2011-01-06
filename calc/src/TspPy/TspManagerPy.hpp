@@ -6,6 +6,7 @@
 
 namespace calc
 {
+    /** Wraps TspManager for usage with TspPy */
     class TspManagerPy
     {
         public:          

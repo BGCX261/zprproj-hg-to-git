@@ -8,11 +8,12 @@ namespace calc
         route_(route),
         state_(NONE)
     {
+        /* Do not create tsp with no cities in route */
         if(route_->getCitiesNumber() == 0)
             throw TspBadRouteException();
     }
 
-
+    /* Return current state */
     Tsp::State Tsp::getState() const
     {
         boost::mutex::scoped_lock lock(mutex_);
@@ -20,24 +21,19 @@ namespace calc
     }
 
 
+    /* Return result */
     const Tsp::Result& Tsp::getResult() const
     {
         boost::mutex::scoped_lock lock(mutex_);
         
-        if(state_ == NONE)
-        {
-            throw TspNoResultException();
-        }
-        else
-        { 
-            while(state_ != SOLVED)
-                solvedCond_.wait(lock);
-        }
-                   
+        // Block until tsp is solved
+        while(state_ != SOLVED)
+            solvedCond_.wait(lock);
+  
         return *result_;
     }
     
-    
+    /* set state to queued */
     void Tsp::setQueued()
     {
         boost::mutex::scoped_lock lock(mutex_);
@@ -45,7 +41,7 @@ namespace calc
             state_ = QUEUED;
     }
 
-
+    /* solve tsp on graph */
     void Tsp::solve()
     {
         boost::mutex::scoped_lock lock(mutex_);
@@ -54,8 +50,9 @@ namespace calc
         state_ = SOLVING;
         lock.unlock();
         
-        TspGraph tsp_graph(route_->getCities());
-        PResult res = tsp_graph.optimizeRoute();
+        
+        TspGraph tsp_graph(route_->getCities()); // build graph
+        PResult res = tsp_graph.optimizeRoute(); // get solution
         
         lock.lock();
         result_ = res;        

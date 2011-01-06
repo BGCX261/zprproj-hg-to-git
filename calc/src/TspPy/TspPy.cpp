@@ -12,6 +12,7 @@ namespace calc
     {
 	    const Tsp::Result &result = tspPtr_->getResult();
         boost::python::list python_result;
+        
 	    for(Tsp::Result::const_iterator i = result.begin(); i != result.end(); ++i)
 		    python_result.append(*i);
 		
