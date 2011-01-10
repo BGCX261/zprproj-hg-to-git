@@ -18,7 +18,7 @@ class CityTest(TestCase):
     def setUp(self):
         self.warsaw = City(name = 'Warsaw', xpos = 30, ypos = 40)
         
-    def testPrintingMethods(self):
+    def test01PrintingMethods(self):
         """
         tests all City's methods
         """
@@ -27,7 +27,7 @@ class CityTest(TestCase):
         self.assertEqual(self.warsaw.getInfo(), {'y': 40, 'x': 30, 'name': 'Warsaw'})
 
         
-    def testCityNameUniqueness(self):
+    def test02CityNameUniqueness(self):
         """
         tests if cities' names are unique
         """
@@ -40,7 +40,7 @@ class CityTest(TestCase):
             badCity.save()
 
             
-    def testCityCoordsUniqueness(self):
+    def test03CityCoordsUniqueness(self):
         """
         tests if cities' posinates are unique
         """
@@ -73,7 +73,7 @@ class RouteTest(TestCase):
         self.clist.save()
 
 
-    def testAddCity(self):
+    def test01AddCity(self):
         """
         tests Route's adding City method
         """
@@ -87,7 +87,7 @@ class RouteTest(TestCase):
         self.assertNotEqual(self.krakow, self.clist.home)
 
 
-    def testDelCity(self):
+    def test02DelCity(self):
         """
         tests Route's deleting City method
         """
@@ -111,7 +111,7 @@ class RouteTest(TestCase):
         self.assertIsNone(self.clist.homeCity)
 
 
-    def testGetCities(self):
+    def test03GetCities(self):
         """
         tests Route's getCiities method
         """
@@ -123,7 +123,7 @@ class RouteTest(TestCase):
         self.assertItemsEqual(self.clist.getCities(), [self.warsaw])
         
 
-    def testHome(self):
+    def test04Home(self):
         """
         tests Route's home method
         """
@@ -134,7 +134,7 @@ class RouteTest(TestCase):
         self.assertEqual(self.clist.home, self.clist.homeCity)
 
 
-    def testInfo(self):
+    def test05Info(self):
         """
         tests Route's info methods and __unicode__ method
         """
@@ -178,7 +178,7 @@ class RouteTest(TestCase):
 class InterfaceTest(TestCase):
     """Class used to test interface methods"""
 
-    def testAddMethods(self):
+    def test01AddMethods(self):
         """
         tests adding methods from interface
         """
@@ -223,7 +223,7 @@ class InterfaceTest(TestCase):
         krakow = City.objects.get(id = cid2)
         self.assertNotEqual(clist.home, krakow)
 
-    def testDelMethods(self):
+    def test02DelMethods(self):
         """
         tests deleting methods from interface
         """
@@ -260,7 +260,7 @@ class InterfaceTest(TestCase):
         
 
     #something's wrong with getCitiesInRoute method!!
-    def testGetMethods(self):
+    def test03GetMethods(self):
         """
         tests getters from interface
         """
@@ -303,7 +303,7 @@ class InterfaceTest(TestCase):
         self.assertListEqual(getCitiesInRoute(clid1), cities)
 
 
-    def testSetHome(self):
+    def test04SetHome(self):
         """
         tests setHomeCity function
         """
@@ -332,6 +332,74 @@ class InterfaceTest(TestCase):
         warsawInfo['position'] = 'middle'
         self.assertIn(warsawInfo, getCitiesInRoute(clid))
 
+
+    def test05TspSolve(self):
+	"""
+	Tests methods responsible for the algorithm execution.
+	"""
+		
+	#checks if algorithm may be executed for routes that doesn't exist
+		
+	falseRouteId = 31 #no route has such id
+	with self.assertRaises(ObjectDoesNotExist):
+		tspSolve(falseRouteId)
+
+	#checks if state of tsp that doesn't exist can be checked
+	falseTspId = 31   #no tsp has such id
+        with self.assertRaises(AttributeError):
+        	tspState(falseTspId)
+
+
+	#checks if algorithm can be executed for empty routes
+	emptyRoute = addRoute('emptyRoute')
+        ponizsza linijka powoduje Segmentation Faulta
+	emptyTspId = tspSolve(emptyRoute)
+	emptyTspRes = tspResult(emptyTspId)
+
+	rid = addRoute('route1')
+	cid1 = addCity('Warsaw', 30, 40)
+	cid2 = addCity('Krakow', 25, 30)
+	cid3 = addCity('Wroclaw', 20, 30)
+	addCityToRoute(rid, cid1)
+	addCityToRoute(rid, cid2)
+	addCityToRoute(rid, cid3)
+	tspId = tspSolve(rid)
+
+	#checks if state of tsp is correct
+	self.assertIn(tspState(tsp_id), ['QUEUED', 'SOLVING', 'SOLVED'])
+	time.sleep(0.5)
+	self.assertEquals(tspState(tspId), 'SOLVED')
+
+	#checks if tsp's attributes have proper values
+	tsp = Tsps().getTsp(tspId)
+	self.assertEqual(tsp.routeId, 2)
+	self.assertEqual(tsp.getState(), TspState.SOLVED)
+
+	self.assertEqual(tspId, 1)
+
+	tsp = Tsps().getTsp(tspId)
+	result = tsp.getResult()
+	result2 = tspResult(tspId)
+
+	#checks if correct value(list of cities) is returned from tspResult
+	self.assertEqual(result, result2)
+	route = Route.objects.get(id = tsp.routeId)
+	cities = route.getCities()
+	for i in result:
+		city = City.objects.get(id = i)
+		self.assertIn(city, cities)
+		
+	self.assertIsNone(Tsps().getTsp(tsp_id))
+	
+	#checks if next added route has proper attributes
+	rid2 = addRoute('route2')
+	addCityToRoute(rid2, cid1)
+	tspId2 = tspSolve(rid2)
+
+	tsp = Tsps().getTsp(tspId2)
+	self.assertEqual(tsp.routeId, 3)
+	self.assertEqual(tspId2, 2)
+	
         
 
 if __name__=='__main__':
