@@ -34,9 +34,8 @@ namespace calc
             {
                 Coord dx = getX() - dest_city.getX();
                 Coord dy = getY() - dest_city.getY();
-                
-				double tmpValue = dx*dx + dy*dy;
-                return sqrt(tmpValue);
+              
+                return sqrt(static_cast<double>(dx*dx + dy*dy));
             }
             
         private:
