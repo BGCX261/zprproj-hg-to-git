@@ -5,7 +5,6 @@ import iface
 def echo(data):
     'simple echo function, for basic testing purpose'
     return data
-
    
    
 #available services

@@ -7,23 +7,23 @@
 
 namespace calc
 {
-    /* Route containing cities */
+    /** Route containing cities */
     class Route
     {
         public:        
-            typedef std::vector<City> Cities; // Cities collection
-            typedef std::vector<City::CityId> CitiesIds; // Collection of cites identifiers          
+            typedef std::vector<City> Cities; /** Cities collection */
+            typedef std::vector<City::CityId> CitiesIds; /** Collection of cites identifiers */
             
-            /* returns collection of cities in route */
+            /** returns collection of cities in route */
             const Cities& getCities() const;
                        
-            /* returns collection of cities ids in route */
+            /** returns collection of cities ids in route */
             const CitiesIds& getCitiesIds() const;            
             
-            /* returns number of the cities in route */
+            /** returns number of the cities in route */
             unsigned getCitiesNumber() const;
             
-            /* appends city to the route */
+            /** appends city to the route */
             void addCity(const City &city);            
             
         private:

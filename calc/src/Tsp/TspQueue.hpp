@@ -16,10 +16,10 @@ namespace calc
     class TspQueue
     {
         public:   
-            /* get tsp and remove from queue, blocks if no tsp available */                     
+            /** get tsp and remove from queue, blocks if no tsp available */                     
             PTsp pop();            
             
-            /* insert tsp at end of queue, sets the tsp state to QUEUED */
+            /** insert tsp at end of queue, sets the tsp state to QUEUED */
             void push(PTsp tsp);
             
         private:

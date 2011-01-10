@@ -14,12 +14,13 @@ namespace calc
     class City
     {
         public:
-            typedef int CityId; // City's identifier type
-            typedef int Coord;  // City's coordinate type
+            typedef int CityId; /** City's identifier type */
+            typedef int Coord;  /** City's coordinate type */
             
             /** Specifies new City at position (x, y) */
             City(CityId id, Coord x, Coord y) : id_(id), coords_(x, y) {}
-               
+            
+            /** returns City identifier */   
             CityId getId() const { return id_; }
             
             /** returns x coordinate of city */
