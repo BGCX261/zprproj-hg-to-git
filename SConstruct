@@ -1,20 +1,14 @@
-# R. Nowak, 2010-03-13   -*- mode: Python; -*-
-
 import os, platform
 
 CALC_LIB_NAME = 'calc'
 
 env = Environment()
-env.Append( ENV = {'PATH' : os.environ['PATH'] })
-env.Append( LIBPATH = [ Dir('./') ] )
 
 if(platform.system() == "Linux"):
-    os.putenv('LD_LIBRARY_PATH', os.getcwd() )
-    os.putenv('PYTHONPATH', os.getcwd() )
     env.Append( CPPFLAGS = '-Wall -pedantic -pthread' )
-    env.Append( CPPPATH = ['/usr/include/python2.6'] )
+    env.Append( CPPPATH = ['/usr/include/python2.7'] )
     env.Append( LINKFLAGS = '-Wall -pthread -Wl,-soname,' + CALC_LIB_NAME )
-    #env.Append( LIBPATH = ['/usr/lib/python2.6'] )
+    #env.Append( LIBPATH = ['/usr/lib/python2.7'] )
     env.Append( LIBS = [ 'boost_thread', 'boost_python', 'boost_graph' ] )
 elif(platform.system() == "Windows"):
     env.Append( CPPFLAGS = ['/EHsc', '/MDd'] )
@@ -55,7 +49,7 @@ def build_tests( env, build_dir ):
     et = env.Clone()
 #    et.Prepend( LIBS = [CALC_LIB_NAME] )
     if(platform.system() == "Linux"):
-        et.Append( LIBS = ['python2.6', 'boost_unit_test_framework'] )
+        et.Append( LIBS = ['python2.7', 'boost_unit_test_framework'] )
     elif(platform.system() == "Windows"):
         et.Append( LINKFLAGS = ' /SUBSYSTEM:CONSOLE ' )
     else:
