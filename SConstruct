@@ -3,10 +3,12 @@ import os, platform
 
 CALC_LIB_NAME = 'calc'
 
+#check if we support this platform
 if(platform.system() != 'Linux' and platform.system() != 'Windows'):
     print 'Unfortunately ' + platform.system() + ' is not supported'
     exit()
 
+#set variables
 opts = Variables()
 if(platform.system() == "Linux"):
     opts.Add(PathVariable('python_headers', 'python headers directory', '/usr/include/python2.7',PathVariable.PathIsDir))
@@ -15,10 +17,12 @@ elif(platform.system() == "Windows"):
     opts.Add(PathVariable('python_headers', 'python headers directory', 'C:/Python27/include',PathVariable.PathIsDir))
     opts.Add(PathVariable('python_libs',    'python libraries directory', 'C:/Python27/libs',PathVariable.PathIsDir))        
 
+#create environment
 env = Environment(variables=opts)
 Help(opts.GenerateHelpText(env) )
 
 
+#set flags etc
 if(platform.system() == "Linux"):
     env.Append( CPPFLAGS = '-Wall -pedantic -pthread' )
     env.Append( CPPPATH = ['${python_headers}'] )
@@ -29,7 +33,8 @@ elif(platform.system() == "Windows"):
     env.Append( CPPFLAGS = ['/EHsc', '/MDd'] )
     env.Append( CPPPATH = [ Dir('C:/Program Files/boost/boost_1_44'), Dir('${python_headers}') ] )
     env.Append( LIBPATH = [ Dir('C:/Program Files/boost/boost_1_44/lib'), Dir('${python_libs}') ] )
-    env.Append( CPPFLAGS = ' /D "_WINDOWS" /D "_USRDLL" /D "CALC_EXPORTS" /D "_WINDLL" ' )
+    #env.Append( CPPFLAGS = ' /D "_WINDOWS" /D "_USRDLL" /D "CALC_EXPORTS" /D "_WINDLL" ' )    
+    env.Append( CPPDEFINES=['_WINDOWS', '_USRDLL', 'CALC_EXPORTS', '_WINDLL'])    
     env.Append( LINKFLAGS = ' /DLL ' )    
 
 
