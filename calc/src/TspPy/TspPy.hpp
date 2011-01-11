@@ -1,3 +1,4 @@
+//#define BOOST_PYTHON_STATIC_LIB
 #ifndef CALC_TSP_PY_HPP
 #define CALC_TSP_PY_HPP
 

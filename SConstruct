@@ -1,4 +1,8 @@
 import os, platform
+import distutils.sysconfig
+
+so_ext = distutils.sysconfig.get_config_var('SO')		
+
 
 
 CALC_LIB_NAME = 'calc'
@@ -14,11 +18,16 @@ if(platform.system() == "Linux"):
     opts.Add(PathVariable('python_headers', 'python headers directory', '/usr/include/python2.7',PathVariable.PathIsDir))
     opts.Add(PathVariable('python_libs',    'python libraries directory', '/usr/lib/python2.7',PathVariable.PathIsDir))    
 elif(platform.system() == "Windows"):
-    opts.Add(PathVariable('python_headers', 'python headers directory', 'C:/Python27/include',PathVariable.PathIsDir))
-    opts.Add(PathVariable('python_libs',    'python libraries directory', 'C:/Python27/libs',PathVariable.PathIsDir))        
+    opts.Add(PathVariable('python_headers', 'python headers directory', 'C:/Python26/include',PathVariable.PathIsDir))
+    opts.Add(PathVariable('python_libs',    'python libraries directory', 'C:/Python26/libs',PathVariable.PathIsDir))        
 
 #create environment
-env = Environment(variables=opts)
+if(platform.system() == "Linux"):
+    env = Environment(variables=opts)
+else:
+    env = Environment(variables=opts, TARGET_ARCH='x86')
+
+
 Help(opts.GenerateHelpText(env) )
 
 
@@ -30,12 +39,11 @@ if(platform.system() == "Linux"):
     env.Append( LIBPATH = ['${python_libs}'] )
     env.Append( LIBS = [ 'boost_thread', 'boost_python', 'boost_graph' ] )
 elif(platform.system() == "Windows"):
-    env.Append( CPPFLAGS = ['/EHsc', '/MDd'] )
-    env.Append( CPPPATH = [ Dir('C:/Program Files/boost/boost_1_44'), Dir('${python_headers}') ] )
-    env.Append( LIBPATH = [ Dir('C:/Program Files/boost/boost_1_44/lib'), Dir('${python_libs}') ] )
-    #env.Append( CPPFLAGS = ' /D "_WINDOWS" /D "_USRDLL" /D "CALC_EXPORTS" /D "_WINDLL" ' )    
-    env.Append( CPPDEFINES=['_WINDOWS', '_USRDLL', 'CALC_EXPORTS', '_WINDLL'])    
-    env.Append( LINKFLAGS = ' /DLL ' )    
+	env.Append( CPPFLAGS = ['/EHsc', '/MDd'] )
+	env.Append( CPPPATH = [ Dir('C:/Program Files (x86)/boost/boost_1_44'), Dir('$python_headers') ] )
+	env.Append( LIBPATH = [ Dir('C:/Program Files (x86)/boost/boost_1_44/lib'), Dir('$python_libs') ] )
+	env.Append( CPPDEFINES=['_CONSOLE'])    
+	#env.Append( LINKFLAGS = ['/MANIFEST'] )  
 
 
 
@@ -48,6 +56,9 @@ def prepare_src_files( build_dir, src_files):
 
 def build_shared( env, build_dir):
     e = env.Clone()
+    if(platform.system() == "Windows"):
+        e.Append( CPPDEFINES=['BOOST_PYTHON_STATIC_LIB', 'BOOST_PYTHON_DYNAMIC_MODULE'])
+        e['SHLIBSUFFIX']=so_ext	
 
     e.VariantDir( build_dir, 'calc/src/', duplicate = 0)
     files_cpp = [
@@ -60,8 +71,9 @@ def build_shared( env, build_dir):
         'TspPy/TspPy.cpp',
     ]
 
-    s = e.SharedLibrary( LIBPREFIX='', target = CALC_LIB_NAME,
-                        source = prepare_src_files(build_dir, files_cpp))
+    s = e.SharedLibrary(SHLIBPREFIX='', target=CALC_LIB_NAME, source=prepare_src_files(build_dir, files_cpp))
+						
+    #e.AddPostAction(s, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 
 def build_tests( env, build_dir ):
     et = env.Clone()
