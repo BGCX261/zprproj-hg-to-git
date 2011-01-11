@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+			   applicationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import config.*;
+			
+			import custom_events.CmdFinishedEvent;
+			
+			import dialogs.*;
+			
+			import flash.events.Event;
+			import flash.utils.flash_proxy;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.mx_internal;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.remoting.mxml.RemoteObject;
+			import mx.utils.URLUtil;
+			
+			
+			private var remoteObj : RemoteObject = null;
+			
+			[BINDABLE]
+			private var selectedCityId_ : int;
+			
+			[Bindable]
+			private var citiesArray_ : Array = null;
+			
+			[BINDABLE]
+			private var selectedRouteId_ : int;
+			
+			[Bindable]
+			private var routesArray_ : Array = null;
+			
+			[Bindable]
+			private var citiesInRootCollection_ : ArrayCollection = new ArrayCollection();
+			
+			private function init() : void
+			{
+				var conf : Config = Config.getInstance();
+				
+				
+				var swf_url : String = mx.core.Application.application.url;
+				if (URLUtil.isHttpURL(swf_url) ) 
+				{
+					conf.setURL( URLUtil.getProtocol(swf_url), URLUtil.getServerNameWithPort(swf_url) );
+				}
+				
+				remoteObj = new RemoteObject();
+				remoteObj.endpoint = conf.getEndpoint();
+				remoteObj.destination = conf.getDestination();
+				remoteObj.echo.addEventListener("result",onResultEcho);
+				
+								
+				remoteObj.delCity.addEventListener("result", onDelCity);
+				remoteObj.delRoute.addEventListener("resutl", onDelRoute);
+				remoteObj.getCities.addEventListener("result", onGetCities);
+				remoteObj.getRoutes.addEventListener("result", onGetRoutes);
+				remoteObj.getCitiesInRoute.addEventListener("result", onGetCitiesInRoot);
+				remoteObj.delCityFromRoute.addEventListener("resutl", onDelCityFromRoute);
+				remoteObj.addCityToRoute.addEventListener("resutl", onAddCityToRoute);
+				remoteObj.tspSolve.addEventListener("result", onTspSolve);
+				remoteObj.addEventListener("fault", onFault);
+				
+				var param:String = "Hello ";
+				remoteObj.echo(param);
+			}
+			
+			private function onResultEcho(re:ResultEvent) : void
+			{
+				status_txt.text = "echo received";
+			}
+			
+			private function onFault(fault:FaultEvent) : void
+			{
+				status_txt.text = "fault: ";
+				status_txt.text += fault.message;
+				
+				for( var d : String in fault.fault )
+				{
+					status_txt.text += fault.fault[d] + "\n";
+				}
+			}
+			
+			private function refreshCitiesClick() : void 
+			{
+				sendCitiesRefresh(null);
+			}
+			
+			private function sendCitiesRefresh(event:Event) : void
+			{
+				remoteObj.getCities();
+			}
+			
+			private function onGetCities(re:ResultEvent) : void
+			{
+				citiesArray_ = re.result as Array;
+				setSelectedCity( -1 );
+			}
+			
+			private function addNewCityClick() : void
+			{
+				var dialog : AddCityDialog = new AddCityDialog();
+				dialog.addEventListener(Event.CHANGE, sendCitiesRefresh );
+				PopUpManager.addPopUp( dialog, this, false );
+				PopUpManager.centerPopUp(dialog);
+			}
+			
+			private function deleteCityClick() : void 
+			{
+				if(selectedCityId_ > 0) {
+					remoteObj.delCity(selectedCityId_);
+				}
+			}
+			
+			private function onDelCity(re:ResultEvent) : void 
+			{
+				sendCitiesRefresh(null);
+			}
+			
+			private function setSelectedCity(id : int) : void
+			{
+				//to można usunąć jak zostanie czas
+				selectedCityId_ = id;
+				if(selectedCityId_ > 0) 
+				{
+					delCity.enabled = true;
+					addItem.enabled = true;
+					delItem.enabled = true;
+				}
+				else 
+				{
+					delCity.enabled = false;
+					addItem.enabled = false;
+					delItem.enabled = false;
+				}				
+			}
+			
+			private function cityDataGridChange() : void
+			{
+				setSelectedCity( citiesArray_[cities.selectedIndex].id ); 
+			}
+			
+			///////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			private function refreshRoutesClick() : void
+			{
+				sendRoutesRefresh(null);
+			}
+			
+			private function sendRoutesRefresh(event:Event) : void
+			{
+				remoteObj.getRoutes();
+			}
+			
+			private function onGetRoutes(re:ResultEvent) : void
+			{
+				routesArray_ = re.result as Array;
+				setSelectedRoute( -1 );
+			}
+			
+			private function setSelectedRoute(id : int) : void
+			{
+				selectedRouteId_ = id;
+				if(selectedRouteId_ > 0) 
+				{
+					optimizeRoute.enabled = true;
+					delRoute.enabled = true;
+					addItem.enabled = true;
+					delItem.enabled = true;
+					
+					selectedRouteName.text = routesArray_[selectedRouteId_].name;
+					sendCitiesOnRouteRefresh(null);
+				}
+				else 
+				{
+					optimizeRoute.enabled = false;
+					delRoute.enabled = false;
+					addItem.enabled = false;
+					delItem.enabled = false;
+					
+					citiesInRootCollection_.source = null;
+					selectedRouteName.text = "";
+				}				
+			}
+			
+			private function sendCitiesOnRouteRefresh(event:Event) : void 
+			{
+				if( selectedRouteId_ > 0) 				
+					remoteObj.getCitiesInRoute(selectedRouteId_);
+				
+			}
+			
+			private function RouteListChange() : void
+			{
+				setSelectedRoute(routesArray_[routesList.selectedIndex].id);
+			}
+			
+			private function deleteRouteClick() : void
+			{
+				if(selectedRouteId_ > 0) 
+				{
+					remoteObj.delRoute(selectedRouteId_);
+				}
+			}
+			
+			private function onDelRoute(re:ResultEvent) : void
+			{
+				sendRoutesRefresh(null);
+			}
+			
+			private function optimizeClick() : void
+			{
+				remoteObj.tspSolve( selectedRouteId_ );
+			}
+			
+			private function addNewRouteClick() : void
+			{
+				var dialog : AddRouteDialog = new AddRouteDialog();
+				dialog.addEventListener(Event.CHANGE, sendRoutesRefresh );
+				PopUpManager.addPopUp( dialog, this, false );
+				PopUpManager.centerPopUp(dialog);
+				
+			}
+			
+			private function onGetCitiesInRoot(re:ResultEvent) : void 
+			{				
+				var citiesInRootArray : Array = re.result as Array;				
+				citiesInRootCollection_.source = citiesInRootArray;
+			}
+			
+			private function showResult(re:ResultEvent) : void
+			{
+				//Dodaj wyświetlanie wyniku
+			}
+			
+			private function onTspSolve(re:ResultEvent) : void
+			{
+				var tsp_id : int = re.result as int;
+				var dialog : ProgressDialog = new ProgressDialog();
+				dialog.addEventListener(CmdFinishedEvent.TYPE, showResult );
+				PopUpManager.addPopUp( dialog, this, false);
+				PopUpManager.centerPopUp(dialog);
+				
+				dialog.startWatch( tsp_id );
+			}
+			//////////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			private function addItemClick() : void
+			{
+				remoteObj.addCityToRoute(selectedRouteId_, selectedCityId_);
+			}
+			
+			private function delItemClick() : void
+			{
+				var city_id : int = citiesInRootCollection_[routeItems.selectedIndex].id;
+				remoteObj.delCityFromRoute( city_id, selectedRouteId_ );
+			}
+			
+			private function setHomeClick() : void
+			{
+				var city_id : int = citiesInRootCollection_[routeItems.selectedIndex].id;
+				remoteObj.setHomeCity( city_id, selectedRouteId_ );
+				//kiedy odświeżać, funkcja setHomeCity nic nie zwraca
+			}
+			
+			private function onDelCityFromRoute(re:ResultEvent) : void
+			{
+				sendCitiesOnRouteRefresh(null);
+			}
+			
+			private function onAddCityToRoute(re:ResultEvent) : void
+			{
+				sendCitiesOnRouteRefresh(null);
+			}
+			
+
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%" height="100%">
+		<s:Panel  title="TSP Solver" width="100%" height="70%">
+			<s:HGroup width="100%" height="100%">
+				<s:VGroup width="33%" height="100%">
+					<s:Label text="cities list"  paddingTop="5"/>
+					<mx:DataGrid id="cities" width="100%" height="70%" dataProvider="{citiesArray_}" change="cityDataGridChange()"> 
+						<mx:columns>
+							<mx:DataGridColumn headerText="name" dataField="name" id="idCol"/>
+							<mx:DataGridColumn headerText="x" dataField="xpos" id="xCol"/>
+							<mx:DataGridColumn headerText="y" dataField="ypos" id="yCol"/>
+						</mx:columns>
+					</mx:DataGrid>
+					<mx:Spacer height="10%" />
+					<s:HGroup width="100%" height="20%">
+						<s:Button id="refreshCities" label="refresh" click = "refreshCitiesClick()" />
+						<s:Button id="addCity" label="add new" click = "addNewCityClick()" />
+						<s:Button id="delCity" label="delete" click = "deleteCityClick()" />
+					</s:HGroup>
+				</s:VGroup>
+				<s:VGroup width="33%" height="100%">
+					<s:Label text="routes list"  paddingTop="5"/>
+					<!--lub dataProvider="{routesArray_.name}"-->
+					<mx:List id="routesList" width="100%" height="70%" dataProvider="{routesArray_}" change="RouteListChange()" />
+					<mx:Spacer height="10%" />
+					<s:HGroup width="100%" height="20%">
+						<s:Button id="refreshRoutes" label="refresh" click = "refreshRoutesClick()" />
+						<s:Button id="addRoute" label="add new" click = "addNewRouteClick()" />
+						<s:Button id="delRoute" label="delete" click = "deleteRouteClick()" />
+						<s:Button id="optimizeRoute" label="optimize" click = "optimizeClick()" />
+					</s:HGroup>
+				</s:VGroup>	
+				<s:VGroup width="34%" height="100%">
+					<s:Label text="selected route details"  paddingTop="5"/>
+					<s:HGroup>
+						<s:Label text="name:" />
+						<s:Label id="selectedRouteName" />
+					</s:HGroup>
+					<mx:DataGrid id="routeItems" width="100%" height="66%" dataProvider="{citiesInRootCollection_}" >
+						<mx:columns>
+							<mx:DataGridColumn headerText="name" dataField="name" id="idRouteCol"/>
+							<mx:DataGridColumn headerText="x" dataField="x" id="xRouteCol"/>
+							<mx:DataGridColumn headerText="y" dataField="y" id="yRouteCol"/>
+							<mx:DataGridColumn headerText="home" dataField="position" id="homeCity" />
+						</mx:columns>
+					</mx:DataGrid>
+					<mx:Spacer height="10%" />
+					<s:HGroup width="100%" height="20%">
+						<mx:Button id="addItem" label="add" click="addItemClick()" />
+						<mx:Button id="delItem" label="delete"  click="delItemClick()" />
+						<mx:Button id="setHome" label="home" click="setHomeClick()" />
+						
+					</s:HGroup>
+				</s:VGroup>
+			</s:HGroup>
+		</s:Panel>
+		
+		<s:Panel title="status messages" width="100%" height="30%" >
+			<s:TextArea id="status_txt" width="100%" height="100%" />
+		</s:Panel>
+	</s:VGroup>
+	
+	
+</s:Application>
