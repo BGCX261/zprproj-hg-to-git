@@ -27,14 +27,17 @@
 			
 			private var remoteObj : RemoteObject = null;
 			
-			[BINDABLE]
-			private var selectedCityId_ : int;
+			[Bindable]
+			private var selectedCityRowId_ : int = -1;
 			
 			[Bindable]
 			private var citiesArray_ : Array = null;
 			
-			[BINDABLE]
-			private var selectedRouteId_ : int;
+			[Bindable]
+			private var selectedRouteRowId_ : int = -1;
+			
+			[Bindable]
+			private var selectedRouteId_ : int = -1;			
 			
 			[Bindable]
 			private var routesArray_ : Array = null;
@@ -120,8 +123,8 @@
 			
 			private function deleteCityClick() : void 
 			{
-				if(selectedCityId_ > 0) {
-					remoteObj.delCity(selectedCityId_);
+				if(selectedCityRowId_ > 0) {
+					remoteObj.delCity(selectedCityRowId_);
 				}
 			}
 			
@@ -133,8 +136,8 @@
 			private function setSelectedCity(id : int) : void
 			{
 				//to można usunąć jak zostanie czas
-				selectedCityId_ = id;
-				if(selectedCityId_ > 0) 
+				selectedCityRowId_ = id;
+				if(selectedCityRowId_ > 0) 
 				{
 					delCity.enabled = true;
 					addItem.enabled = true;
@@ -171,12 +174,24 @@
 				setSelectedRoute( -1 );
 			}
 			
+			private function getRowIdByRouteId(id : int) : int
+			{
+			    for (var i: int=0; i < routesArray_.length; i++)
+				{
+					if(routesArray_[i].id == id)
+					    return i
+				}
+				
+				return -1;
+			}
+			
 			private function setSelectedRoute(id : int) : void
 			{
-				selectedRouteId_ = id;
-				if(selectedRouteId_ > 0) 
+				selectedRouteRowId_ = id;
+				if(selectedRouteRowId_ > 0) 
 				{
-					optimizeRoute.enabled = true;
+				    optimizeRoute.enabled = (routesArray_[routesList.selectedIndex].count > 0)
+
 					delRoute.enabled = true;
 					addItem.enabled = true;
 					delItem.enabled = true;
@@ -196,8 +211,8 @@
 			
 			private function sendCitiesOnRouteRefresh(event:Event) : void 
 			{
-				if( selectedRouteId_ > 0) 				
-					remoteObj.getCitiesInRoute(selectedRouteId_);
+				if( selectedRouteRowId_ > 0) 				
+					remoteObj.getCitiesInRoute(selectedRouteRowId_);
 				
 			}
 			
@@ -208,9 +223,9 @@
 			
 			private function deleteRouteClick() : void
 			{
-				if(selectedRouteId_ > 0) 
+				if(selectedRouteRowId_ > 0) 
 				{
-					remoteObj.delRoute(selectedRouteId_);
+					remoteObj.delRoute(selectedRouteRowId_);
 				}
 			}
 			
@@ -221,7 +236,7 @@
 			
 			private function optimizeClick() : void
 			{
-				remoteObj.tspSolve( selectedRouteId_ );
+				remoteObj.tspSolve( selectedRouteRowId_ );
 			}
 			
 			private function addNewRouteClick() : void
@@ -258,19 +273,19 @@
 			
 			private function addItemClick() : void
 			{
-				remoteObj.addCityToRoute(selectedRouteId_, selectedCityId_);
+				remoteObj.addCityToRoute(selectedRouteRowId_, selectedCityRowId_);
 			}
 			
 			private function delItemClick() : void
 			{
 				var city_id : int = citiesInRoot_[routeItems.selectedIndex].id;
-				remoteObj.delCityFromRoute( city_id, selectedRouteId_ );
+				remoteObj.delCityFromRoute( city_id, selectedRouteRowId_ );
 			}
 			
 			private function setHomeClick() : void
 			{
 				var city_id : int = citiesInRoot_[routeItems.selectedIndex].id;
-				remoteObj.setHomeCity(selectedRouteId_, city_id);
+				remoteObj.setHomeCity(selectedRouteRowId_, city_id);
 			}
 			
 			private function onDelCityFromRoute(re:ResultEvent) : void
