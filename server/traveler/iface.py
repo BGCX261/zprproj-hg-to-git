@@ -23,8 +23,8 @@ def addCityToRoute(route_id, city_id):
 def delCity(city_id):
     City.objects.get(id = city_id).delete()
 
-def delRoute(list_id):
-    Route.objects.get(id = list_id).delete()
+def delRoute(route_id):
+    Route.objects.get(id = route_id).delete()
 
 def delCityFromRoute(city_id, route_id):
     city = City.objects.get(id = city_id)

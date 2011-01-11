@@ -40,7 +40,7 @@
 			private var routesArray_ : Array = null;
 			
 			[Bindable]
-			private var citiesInRootCollection_ : ArrayCollection = new ArrayCollection();
+			private var citiesInRootCollection_ : Array = null;
 			
 			private function init() : void
 			{
@@ -71,6 +71,10 @@
 				
 				var param:String = "Hello ";
 				remoteObj.echo(param);
+				
+				sendCitiesRefresh(null);
+				sendRoutesRefresh(null);				
+				
 			}
 			
 			private function onResultEcho(re:ResultEvent) : void
@@ -145,7 +149,7 @@
 			
 			private function cityDataGridChange() : void
 			{
-				setSelectedCity( citiesArray_[cities.selectedIndex].id ); 
+				setSelectedCity( citiesArray_[cities.selectedIndex].id );
 			}
 			
 			///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,6 +162,7 @@
 			private function sendRoutesRefresh(event:Event) : void
 			{
 				remoteObj.getRoutes();
+				Alert.show("REFRESHED")
 			}
 			
 			private function onGetRoutes(re:ResultEvent) : void
@@ -176,7 +181,6 @@
 					addItem.enabled = true;
 					delItem.enabled = true;
 					
-					selectedRouteName.text = routesArray_[selectedRouteId_].name;
 					sendCitiesOnRouteRefresh(null);
 				}
 				else 
@@ -186,8 +190,7 @@
 					addItem.enabled = false;
 					delItem.enabled = false;
 					
-					citiesInRootCollection_.source = null;
-					selectedRouteName.text = "";
+					citiesInRootCollection_ = null;
 				}				
 			}
 			
@@ -200,7 +203,7 @@
 			
 			private function RouteListChange() : void
 			{
-				setSelectedRoute(routesArray_[routesList.selectedIndex].id);
+				setSelectedRoute(routesArray_[routesList.selectedIndex].id);		
 			}
 			
 			private function deleteRouteClick() : void
@@ -232,8 +235,7 @@
 			
 			private function onGetCitiesInRoot(re:ResultEvent) : void 
 			{				
-				var citiesInRootArray : Array = re.result as Array;				
-				citiesInRootCollection_.source = citiesInRootArray;
+				citiesInRootCollection_ = re.result as Array;
 			}
 			
 			private function showResult(re:ResultEvent) : void
@@ -267,7 +269,7 @@
 			private function setHomeClick() : void
 			{
 				var city_id : int = citiesInRootCollection_[routeItems.selectedIndex].id;
-				remoteObj.setHomeCity( city_id, selectedRouteId_ );
+				remoteObj.setHomeCity(selectedRouteId_, city_id);
 				//kiedy odświeżać, funkcja setHomeCity nic nie zwraca
 			}
 			
@@ -292,9 +294,10 @@
 					<s:Label text="cities list"  paddingTop="5"/>
 					<mx:DataGrid id="cities" width="100%" height="70%" dataProvider="{citiesArray_}" change="cityDataGridChange()"> 
 						<mx:columns>
-							<mx:DataGridColumn headerText="name" dataField="name" id="idCol"/>
-							<mx:DataGridColumn headerText="x" dataField="xpos" id="xCol"/>
-							<mx:DataGridColumn headerText="y" dataField="ypos" id="yCol"/>
+							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="cityIdCol"/>						
+							<mx:DataGridColumn headerText="name" dataField="name" id="cityNameCol"/>
+							<mx:DataGridColumn headerText="x" dataField="xpos" id="cityXPosCol"/>
+							<mx:DataGridColumn headerText="y" dataField="ypos" id="cityYPosCol"/>
 						</mx:columns>
 					</mx:DataGrid>
 					<mx:Spacer height="10%" />
@@ -308,7 +311,8 @@
 					<s:Label text="routes list"  paddingTop="5"/>
 					<mx:DataGrid id="routesList" width="100%" height="70%" dataProvider="{routesArray_}" change="RouteListChange()"> 
 						<mx:columns>
-							<mx:DataGridColumn headerText="name" dataField="name" id="idColR"/>
+							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="routeIdCol"/>						
+							<mx:DataGridColumn headerText="name" dataField="name" id="routeNameCol"/>
 						</mx:columns>
 					</mx:DataGrid>					
 					<mx:Spacer height="10%" />
@@ -327,10 +331,11 @@
 					</s:HGroup>
 					<mx:DataGrid id="routeItems" width="100%" height="66%" dataProvider="{citiesInRootCollection_}" >
 						<mx:columns>
-							<mx:DataGridColumn headerText="name" dataField="name" id="idRouteCol"/>
-							<mx:DataGridColumn headerText="x" dataField="x" id="xRouteCol"/>
-							<mx:DataGridColumn headerText="y" dataField="y" id="yRouteCol"/>
-							<mx:DataGridColumn headerText="home" dataField="position" id="homeCity" />
+							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="routeItemsCityId"/>						
+							<mx:DataGridColumn headerText="name" dataField="name" id="routeItemsRouteNameId"/>
+							<mx:DataGridColumn headerText="x" dataField="xpos" id="routeItemsCityXPos"/>
+							<mx:DataGridColumn headerText="y" dataField="ypos" id="routeItemsCityYPos"/>
+							<mx:DataGridColumn headerText="home" dataField="position" id="routeItemsHomeCity" />
 						</mx:columns>
 					</mx:DataGrid>
 					<mx:Spacer height="10%" />
