@@ -40,14 +40,14 @@
 			private var routesArray_ : Array = null;
 			
 			[Bindable]
-			private var citiesInRootCollection_ : Array = null;
+			private var citiesInRoot_ : Array = null;
 			
 			private function init() : void
 			{
 				var conf : Config = Config.getInstance();
 				
 				
-				var swf_url : String = mx.core.Application.application.url;
+				var swf_url : String = mx.core.FlexGlobals.topLevelApplication.url;
 				if (URLUtil.isHttpURL(swf_url) ) 
 				{
 					conf.setURL( URLUtil.getProtocol(swf_url), URLUtil.getServerNameWithPort(swf_url) );
@@ -69,7 +69,7 @@
 				remoteObj.tspSolve.addEventListener("result", onTspSolve);
 				remoteObj.addEventListener("fault", onFault);
 				
-				var param:String = "Hello ";
+				var param:String = "Travelling Salesman Problem Solver Echo!";
 				remoteObj.echo(param);
 				
 				sendCitiesRefresh(null);
@@ -79,7 +79,7 @@
 			
 			private function onResultEcho(re:ResultEvent) : void
 			{
-				status_txt.text = "echo received";
+				status_txt.text = "echo received: " + (re.result as String)
 			}
 			
 			private function onFault(fault:FaultEvent) : void
@@ -189,7 +189,7 @@
 					addItem.enabled = false;
 					delItem.enabled = false;
 					
-					citiesInRootCollection_ = null;
+					citiesInRoot_ = null;
 				}				
 			}
 			
@@ -234,7 +234,8 @@
 			
 			private function onGetCitiesInRoot(re:ResultEvent) : void 
 			{				
-				citiesInRootCollection_ = re.result as Array;
+				citiesInRoot_ = re.result as Array;
+				
 			}
 			
 			private function showResult(re:ResultEvent) : void
@@ -261,13 +262,13 @@
 			
 			private function delItemClick() : void
 			{
-				var city_id : int = citiesInRootCollection_[routeItems.selectedIndex].id;
+				var city_id : int = citiesInRoot_[routeItems.selectedIndex].id;
 				remoteObj.delCityFromRoute( city_id, selectedRouteId_ );
 			}
 			
 			private function setHomeClick() : void
 			{
-				var city_id : int = citiesInRootCollection_[routeItems.selectedIndex].id;
+				var city_id : int = citiesInRoot_[routeItems.selectedIndex].id;
 				remoteObj.setHomeCity(selectedRouteId_, city_id);
 				//kiedy odświeżać, funkcja setHomeCity nic nie zwraca
 			}
@@ -287,16 +288,16 @@
 	</fx:Script>
 	
 	<s:VGroup width="100%" height="100%">
-		<s:Panel  title="TSP Solver" width="100%" height="70%">
+		<s:Panel  title="Travelling Salesman Problem Solver Client" width="100%" height="70%">
 			<s:HGroup width="100%" height="100%">
 				<s:VGroup width="33%" height="100%">
-					<s:Label text="cities list"  paddingTop="5"/>
+					<s:Label text="Available cities:"  paddingTop="5"/>
 					<mx:DataGrid id="cities" width="100%" height="70%" dataProvider="{citiesArray_}" change="cityDataGridChange()"> 
 						<mx:columns>
 							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="cityIdCol"/>						
-							<mx:DataGridColumn headerText="name" dataField="name" id="cityNameCol"/>
-							<mx:DataGridColumn headerText="x" dataField="xpos" id="cityXPosCol"/>
-							<mx:DataGridColumn headerText="y" dataField="ypos" id="cityYPosCol"/>
+							<mx:DataGridColumn headerText="City name" dataField="name" id="cityNameCol"/>
+							<mx:DataGridColumn headerText="Coordinate X " dataField="xpos" id="cityXPosCol"/>
+							<mx:DataGridColumn headerText="Coordinate Y" dataField="ypos" id="cityYPosCol"/>
 						</mx:columns>
 					</mx:DataGrid>
 					<mx:Spacer height="10%" />
@@ -307,11 +308,11 @@
 					</s:HGroup>
 				</s:VGroup>
 				<s:VGroup width="33%" height="100%">
-					<s:Label text="routes list"  paddingTop="5"/>
+					<s:Label text="Defined routes:"  paddingTop="5"/>
 					<mx:DataGrid id="routesList" width="100%" height="70%" dataProvider="{routesArray_}" change="RouteListChange()"> 
 						<mx:columns>
 							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="routeIdCol"/>						
-							<mx:DataGridColumn headerText="name" dataField="name" id="routeNameCol"/>
+							<mx:DataGridColumn headerText="Route name" dataField="name" id="routeNameCol"/>
 						</mx:columns>
 					</mx:DataGrid>					
 					<mx:Spacer height="10%" />
@@ -323,18 +324,14 @@
 					</s:HGroup>
 				</s:VGroup>	
 				<s:VGroup width="34%" height="100%">
-					<s:Label text="selected route details"  paddingTop="5"/>
-					<s:HGroup>
-						<s:Label text="name:" />
-						<s:Label id="selectedRouteName" />
-					</s:HGroup>
-					<mx:DataGrid id="routeItems" width="100%" height="66%" dataProvider="{citiesInRootCollection_}" >
+					<s:Label text="Cities in selected route:"  paddingTop="5"/>
+					<mx:DataGrid id="routeItems" width="100%" height="66%" dataProvider="{citiesInRoot_}" >
 						<mx:columns>
 							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="routeItemsCityId"/>						
-							<mx:DataGridColumn headerText="name" dataField="name" id="routeItemsRouteNameId"/>
-							<mx:DataGridColumn headerText="x" dataField="xpos" id="routeItemsCityXPos"/>
-							<mx:DataGridColumn headerText="y" dataField="ypos" id="routeItemsCityYPos"/>
-							<mx:DataGridColumn headerText="home" dataField="position" id="routeItemsHomeCity" />
+							<mx:DataGridColumn headerText="City name" dataField="name" id="routeItemsRouteNameId"/>
+							<mx:DataGridColumn headerText="Coordinate X" dataField="xpos" id="routeItemsCityXPos"/>
+							<mx:DataGridColumn headerText="Coordinate Y" dataField="ypos" id="routeItemsCityYPos"/>
+							<mx:DataGridColumn headerText="Position" dataField="position" id="routeItemsHomeCity" />
 						</mx:columns>
 					</mx:DataGrid>
 					<mx:Spacer height="10%" />
