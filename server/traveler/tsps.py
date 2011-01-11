@@ -7,7 +7,7 @@ class Tsps:
             self.tsps_ = dict()  
             
         def addTsp(self, tsp):
-            self.tsps_[tsp.routeId()] = tsp
+            self.tsps_[tsp.routeId] = tsp
 
         def getTsp(self, route_id):
             return self.tsps_.get(route_id)
