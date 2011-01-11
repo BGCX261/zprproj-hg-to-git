@@ -60,13 +60,14 @@
 				
 								
 				remoteObj.delCity.addEventListener("result", onDelCity);
-				remoteObj.delRoute.addEventListener("resutl", onDelRoute);
+				remoteObj.delRoute.addEventListener("result", onDelRoute);
 				remoteObj.getCities.addEventListener("result", onGetCities);
 				remoteObj.getRoutes.addEventListener("result", onGetRoutes);
 				remoteObj.getCitiesInRoute.addEventListener("result", onGetCitiesInRoot);
-				remoteObj.delCityFromRoute.addEventListener("resutl", onDelCityFromRoute);
-				remoteObj.addCityToRoute.addEventListener("resutl", onAddCityToRoute);
+				remoteObj.delCityFromRoute.addEventListener("result", onDelCityFromRoute);
+				remoteObj.addCityToRoute.addEventListener("result", onAddCityToRoute);
 				remoteObj.tspSolve.addEventListener("result", onTspSolve);
+				remoteObj.setHomeCity.addEventListener("result", onSetHomeCity);
 				remoteObj.addEventListener("fault", onFault);
 				
 				var param:String = "Travelling Salesman Problem Solver Echo!";
@@ -270,7 +271,6 @@
 			{
 				var city_id : int = citiesInRoot_[routeItems.selectedIndex].id;
 				remoteObj.setHomeCity(selectedRouteId_, city_id);
-				//kiedy odświeżać, funkcja setHomeCity nic nie zwraca
 			}
 			
 			private function onDelCityFromRoute(re:ResultEvent) : void
@@ -282,6 +282,11 @@
 			{
 				sendCitiesOnRouteRefresh(null);
 			}
+			
+			private function onSetHomeCity(re:ResultEvent) : void
+			{
+				sendCitiesOnRouteRefresh(null);
+			}			
 			
 
 		]]>
