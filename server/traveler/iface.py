@@ -52,7 +52,7 @@ def setHomeCity(route_id, city_id):
     route = Route.objects.get(id = route_id)
     route.home = city
     route.save()
-    
+       
 def tspSolve(route_id):
     route = Route.objects.get(id=route_id)
     tsp = Tsp(route)

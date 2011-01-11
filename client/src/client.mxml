@@ -276,16 +276,19 @@
 			private function onDelCityFromRoute(re:ResultEvent) : void
 			{
 				sendCitiesOnRouteRefresh(null);
+                sendRoutesRefresh(null);				
 			}
 			
 			private function onAddCityToRoute(re:ResultEvent) : void
 			{
 				sendCitiesOnRouteRefresh(null);
+				sendRoutesRefresh(null);
 			}
 			
 			private function onSetHomeCity(re:ResultEvent) : void
 			{
 				sendCitiesOnRouteRefresh(null);
+                sendRoutesRefresh(null);												
 			}			
 			
 
@@ -318,6 +321,8 @@
 						<mx:columns>
 							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="routeIdCol"/>						
 							<mx:DataGridColumn headerText="Route name" dataField="name" id="routeNameCol"/>
+							<mx:DataGridColumn headerText="Cities number" dataField="count" id="routeCountCol"/>							
+							<mx:DataGridColumn headerText="Route Length" dataField="length" id="routeLengthCol"/>														
 						</mx:columns>
 					</mx:DataGrid>					
 					<mx:Spacer height="10%" />

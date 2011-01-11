@@ -1,4 +1,5 @@
 from django.db import models
+from math import sqrt
 
 
 
@@ -50,6 +51,7 @@ class Route(models.Model):
 
         if self.homeCity is None:
             self.homeCity = city
+
        
             
     def delCity(self, city):
@@ -69,7 +71,7 @@ class Route(models.Model):
         cities = []
         for c in Membership.objects.filter(route=self).order_by('order'):
             cities.append(c.city)
-            
+
         return cities
         
         
@@ -96,7 +98,7 @@ class Route(models.Model):
         
     def getInfo(self):
         """returns basic information about the list"""
-        return {'id': self.id, 'name': self.name, 'count': self.cities.count()}
+        return {'id': self.id, 'name': self.name, 'count': self.cities.count(), 'length': self.getLength()}
         
         
     def getCitiesInfo(self):
@@ -112,9 +114,20 @@ class Route(models.Model):
             cityInfo['position'] = pos
             
             info.append(cityInfo)
-            
+        #print 'current length: ', self.getLength()                        
         return info
         
+    def getLength(self):
+        if self.cities.count() < 2:
+            return 0
+        length = 0
+        print self.getCities(), (self.getCities()[:-1], self.getCities()[1:])
+        for c1,c2 in zip(self.getCities()[:-1], self.getCities()[1:]):
+            length += self.citiesDistance(c1,c2)
+        return length
+            
+    def citiesDistance(self, city1, city2):
+        return sqrt((city2.xpos - city1.xpos)**2 + (city2.ypos - city1.ypos)**2)
         
     def empty(self):
         """checks if list is empty"""
