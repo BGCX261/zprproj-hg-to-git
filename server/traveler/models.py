@@ -54,12 +54,14 @@ class Route(models.Model):
             
     def delCity(self, city):
         """remove city from the list"""
-        Membership.objects.get(route=self, city=city).delete()
         
-        if self.homeCity == city and self.empty():
-            self.homeCity = None
-        elif self.homeCity == city and not self.empty():
-            self.homeCity = self.getCities()[0]          
+        if self.homeCity.pk == city.pk:
+            self.homeCity = None  
+            
+        Membership.objects.get(route=self, city=city).delete() 
+                          
+        if not self.empty():
+            self.homeCity = self.getCities()[0]
 
         
     def getCities(self):
@@ -123,6 +125,9 @@ class Membership(models.Model):
     route = models.ForeignKey(Route)
     city = models.ForeignKey(City)
     order = models.PositiveIntegerField()
+    
+    class Meta:
+        unique_together = ('route', 'city')    
     
     def __unicode__(self):
         return str(self.city) + ' in ' + str(self.route) + ' (' + str(self.order) + ')'

@@ -2,6 +2,7 @@ from models import City, Route
 from calc import Tsp, TspManager, TspState
 from tsps import Tsps
 
+
 def addCity(name, x, y):
     print name
     city = City(name = name, xpos = x, ypos = y)
@@ -30,6 +31,7 @@ def delCityFromRoute(city_id, route_id):
     city = City.objects.get(id = city_id)
     route = Route.objects.get(id = route_id)
     route.delCity(city)
+    route.save()
     
 def getCities():
     cities = []

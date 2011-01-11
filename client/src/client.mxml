@@ -162,7 +162,6 @@
 			private function sendRoutesRefresh(event:Event) : void
 			{
 				remoteObj.getRoutes();
-				Alert.show("REFRESHED")
 			}
 			
 			private function onGetRoutes(re:ResultEvent) : void
