@@ -352,7 +352,7 @@ class InterfaceTest(TestCase):
 
 	#checks if algorithm can be executed for empty routes
 	emptyRoute = addRoute('emptyRoute')
-        ponizsza linijka powoduje Segmentation Faulta
+        #ponizsza linijka powoduje Segmentation Faulta
 	emptyTspId = tspSolve(emptyRoute)
 	emptyTspRes = tspResult(emptyTspId)
 
