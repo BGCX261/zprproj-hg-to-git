@@ -287,10 +287,10 @@
 		]]>
 	</fx:Script>
 	
-	<s:VGroup width="100%" height="100%">
+	<s:VGroup width="100%" height="100%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
 		<s:Panel  title="Travelling Salesman Problem Solver Client" width="100%" height="70%">
-			<s:HGroup width="100%" height="100%">
-				<s:VGroup width="33%" height="100%">
+			<s:HGroup width="100%" height="100%" paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="5">
+				<s:VGroup width="33%" height="100%"  >
 					<s:Label text="Available cities:"  paddingTop="5"/>
 					<mx:DataGrid id="cities" width="100%" height="70%" dataProvider="{citiesArray_}" change="cityDataGridChange()"> 
 						<mx:columns>
@@ -325,7 +325,7 @@
 				</s:VGroup>	
 				<s:VGroup width="34%" height="100%">
 					<s:Label text="Cities in selected route:"  paddingTop="5"/>
-					<mx:DataGrid id="routeItems" width="100%" height="66%" dataProvider="{citiesInRoot_}" >
+					<mx:DataGrid id="routeItems" width="100%" height="70%" dataProvider="{citiesInRoot_}" >
 						<mx:columns>
 							<mx:DataGridColumn visible="false" headerText="id" dataField="id" id="routeItemsCityId"/>						
 							<mx:DataGridColumn headerText="City name" dataField="name" id="routeItemsRouteNameId"/>
