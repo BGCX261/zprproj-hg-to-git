@@ -6,5 +6,5 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     #traveler app wil handle its requests on its own
-    (r'^traveler', include('server.traveler.urls')),
+    (r'^traveler/', include('server.traveler.urls')),
 )

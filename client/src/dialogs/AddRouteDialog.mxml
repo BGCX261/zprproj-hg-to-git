@@ -33,7 +33,7 @@
 			{
 				if( routeName.text.length == 0 )
 					Alert.show('give the route name');				
-				remoteObj.addCity(routeName.text, x, y);
+				remoteObj.addRoute(routeName.text);
 			}
 			
 			private function onAddRoute(re:ResultEvent) : void 

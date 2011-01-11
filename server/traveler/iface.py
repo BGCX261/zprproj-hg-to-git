@@ -3,11 +3,13 @@ from calc import Tsp, TspManager, TspState
 from tsps import Tsps
 
 def addCity(name, x, y):
+    print name
     city = City(name = name, xpos = x, ypos = y)
     city.save()
     return city.id
     
 def addRoute(name):
+    print name
     route = Route(name = name)
     route.save()
     return route.id

@@ -4,7 +4,7 @@ package config {
 	public class Config
 	{
 		/* ustawienia domyślne ustawiane po uruchomieniu przeglądarki internetowej */
-		//"http://127.0.0.1:8000/demo/"
+		//"http://127.0.0.1:8000/traveler/"
 		private static const DEFAULT_PROTOCOL:String = "http";
 		private static const DEFAULT_SERVER_NAME_WITH_PORT:String = "127.0.0.1:8000";
 		private static const DEFAULT_ENDPOINT_SUFFIX:String = "traveler/";

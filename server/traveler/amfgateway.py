@@ -19,7 +19,7 @@ services = {
     'traveler.getCities'        : iface.getCities,
     'traveler.getRoutes'        : iface.getRoutes,
     'traveler.getCitiesInRoute' : iface.getCitiesInRoute,
-    'traveler.setHomeCity'      : iface.setFirstCity,
+    'traveler.setHomeCity'      : iface.setHomeCity,
     'traveler.tspSolve'         : iface.tspSolve,
     'traveler.tspState'         : iface.tspState,
     'traveler.tspResult'        : iface.tspResult,

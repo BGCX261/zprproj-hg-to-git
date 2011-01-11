@@ -306,8 +306,11 @@
 				</s:VGroup>
 				<s:VGroup width="33%" height="100%">
 					<s:Label text="routes list"  paddingTop="5"/>
-					<!--lub dataProvider="{routesArray_.name}"-->
-					<mx:List id="routesList" width="100%" height="70%" dataProvider="{routesArray_}" change="RouteListChange()" />
+					<mx:DataGrid id="routesList" width="100%" height="70%" dataProvider="{routesArray_}" change="RouteListChange()"> 
+						<mx:columns>
+							<mx:DataGridColumn headerText="name" dataField="name" id="idColR"/>
+						</mx:columns>
+					</mx:DataGrid>					
 					<mx:Spacer height="10%" />
 					<s:HGroup width="100%" height="20%">
 						<s:Button id="refreshRoutes" label="refresh" click = "refreshRoutesClick()" />

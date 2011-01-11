@@ -18,7 +18,7 @@ class City(models.Model):
         return self.name + '(' + str(self.xpos) + ',' + str(self.ypos) + ')'
         
     def getInfo(self):
-        return {'name': self.name, 'x': self.xpos, 'y': self.ypos}
+        return {'id': self.id, 'name': self.name, 'xpos': self.xpos, 'ypos': self.ypos}
 
 
 
@@ -94,7 +94,7 @@ class Route(models.Model):
         
     def getInfo(self):
         """returns basic information about the list"""
-        return {'name': self.name, 'count': self.cities.count()}
+        return {'id': self.id, 'name': self.name, 'count': self.cities.count()}
         
         
     def getCitiesInfo(self):
