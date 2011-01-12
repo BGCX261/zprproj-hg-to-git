@@ -114,14 +114,12 @@ class Route(models.Model):
             cityInfo['position'] = pos
             
             info.append(cityInfo)
-        #print 'current length: ', self.getLength()                        
         return info
         
     def getLength(self):
         if self.cities.count() < 2:
             return 0
         length = 0
-        print self.getCities(), (self.getCities()[:-1], self.getCities()[1:])
         for c1,c2 in zip(self.getCities()[:-1], self.getCities()[1:]):
             length += self.citiesDistance(c1,c2)
         return length

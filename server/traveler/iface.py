@@ -67,6 +67,7 @@ def tspState(route_id):
 
 def tspResult(route_id):
     tsp = Tsps().getTsp(route_id)
+    result = []
     if tsp.getState() == TspState.SOLVED:
         route = Route.objects.get(id = route_id)
         route.cities.clear() 

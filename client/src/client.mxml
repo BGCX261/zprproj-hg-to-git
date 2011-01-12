@@ -36,7 +36,11 @@
 			private var routesArray_ : Array;
 			
 			[Bindable]
-			private var routeCitiesArray_ : Array = null;
+			private var routeCitiesArray_ : Array = new Array();
+			
+			[Bindable]
+			private var lastRouteId_ : int = -1;			
+	
 			
 			private function init() : void
 			{
@@ -195,11 +199,36 @@
 			private function deleteRouteClick() : void
 			{
 			    remoteObject.delRoute(routesGetSelected().id);
-			}					
+			}
+			
+			private function selectRoute(id : int) : Boolean
+			{
+			    if(id < 0)
+			        return false;
+			        
+			    for(var i : int = 0; i < routesArray_.length; ++i)
+			    {
+			        if(routesArray_[i].id == id)
+			        {
+			            routes.selectedIndex = i;
+                        routes.validateNow();
+                        routes.scrollToIndex(i);
+                        return true;
+			        }
+			    }
+			    return false;
+			}
 			
 			private function onGetRoutes(re:ResultEvent) : void
 			{
 				routesArray_ = re.result as Array;
+                if(!selectRoute(lastRouteId_))
+                {
+                    routeCities.dataProvider.removeAll();
+                    routeCities.invalidateDisplayList()
+                    lastRouteId_ = -1
+                }
+
 				updateRoutesSelection();
 			}
 			
@@ -223,6 +252,11 @@
 			{
                 updateRoutesSelection();
 				sendCitiesOnRouteRefresh(null);
+				
+                if(routesGetSelected() != null)
+                    lastRouteId_ = routesGetSelected().id
+                else		
+                    lastRouteId_ = -1  			
 			}
 
 			
@@ -231,16 +265,13 @@
 				//Dodaj wyświetlanie wyniku
 			}
 			
-			private function RouteCitiesChange() : void
-			{
-                updateRouteCitiesSelection();			
-			}
+
 						
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
 					
 			private function routeCitiesGetSelected() : Object
 			{
-			    if(routeCitiesArray_ == null) return null;
+			    //if(routeCitiesArray_ == null) return null;
 			    return routeCitiesArray_[routeCities.selectedIndex];
 			}	
 			
@@ -297,6 +328,11 @@
 			{
 				sendCitiesOnRouteRefresh(null);
                 sendRoutesRefresh(null);												
+			}			
+			
+			private function RouteCitiesChange() : void
+			{
+                updateRouteCitiesSelection();
 			}			
 			
 
