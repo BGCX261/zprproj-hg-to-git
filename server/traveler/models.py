@@ -83,6 +83,9 @@ class Route(models.Model):
         """
         return self.homeCity
         
+    def clear(self):
+        self.cities.clear()
+        self.homeCity = None
        
         
     @home.setter

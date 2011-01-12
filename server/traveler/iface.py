@@ -54,7 +54,6 @@ def setHomeCity(route_id, city_id):
     route.save()
        
 def tspSolve(route_id):
-    print 'solve ', route_id
     route = Route.objects.get(id=route_id)
     tsp = Tsp(route)
     tsp.routeId = route.id
@@ -63,18 +62,15 @@ def tspSolve(route_id):
     Tsps().addTsp(tsp)
     
 def tspState(route_id):
-    print 'state ',route_id
     tsp = Tsps().getTsp(route_id)
     return str(tsp.getState())
 
 def tspResult(route_id):
-    print 'result ',route_id
     tsp = Tsps().getTsp(route_id)
     result = []
     if tsp.getState() == TspState.SOLVED:
         route = Route.objects.get(id = route_id)
-        route.cities.clear() 
-        route.home = None       
+        route.clear()
         result = tsp.getResult()
         for i in result:
             route.addCity(City.objects.get(id=i))
