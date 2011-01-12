@@ -254,18 +254,4 @@ BOOST_AUTO_TEST_CASE( tspManagerQueue )
 		PTsp tmpTsp(queue.pop());
 		BOOST_CHECK_EQUAL( tmpTsp->getState(), Tsp::QUEUED );
 	}
-
-	// tests correctness of cooperation of TspManager and TspQueue
-	// with many threads
-	const int MAX_THREADS = 1;
-	boost::thread_group threadGroup;
-	for (int i = 0; i < MAX_THREADS; ++i)
-	{
-		// this part is incorrect
-		//threadGroup.create_thread(boost::bind(&threadF, route1));
-	}
-	threadGroup.join_all();
-
-	int i = 1;
-	++i;
 }

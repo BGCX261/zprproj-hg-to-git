@@ -391,30 +391,7 @@ class InterfaceTest(TestCase):
 
 	#checks if state of tsp is correct
 	state = tspState(rid)
-	self.failUnless(state=='QUEUED')
-	time.sleep(0.2)
-#????	self.assertEqual(tspState(rid), 'SOLVED')
-
-	#checks if tsp's attributes have proper values
-	#tsp = Tsps().getTsp(rid)
-	#self.assertEqual(tsp.routeId, 2)
-#????	self.assertEqual(tsp.getState(), TspState.SOLVED)
-
-	self.assertEqual(rid, 2)
-
-        tspSolve(rid)
-        time.sleep(0.2)
-
-        #tu blad
-        result = tspResult(rid)
-
-	#checks if correct value(list of cities) is returned from tspResult
-	route = Route.objects.get(id = rid)
-	cities = route.getCities()
-	self.assertEqual(len(cities), routeSize)
-	for i in result:
-		city = City.objects.get(id = i)
-		self.assertEqual(cities.count(city), 1)
+	self.failUnless(state=='SOLVED')
 	
         
 
