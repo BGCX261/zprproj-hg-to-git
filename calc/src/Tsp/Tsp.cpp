@@ -1,12 +1,14 @@
 #include "Tsp.hpp"
 #include "TspGraph.hpp"
+#include <iostream>
 
 namespace calc
 {
             
     Tsp::Tsp(PRoute route) :
         route_(route),
-        state_(NONE)
+        state_(NONE),
+        queuedNoSolve_(false)
     {
         /* Do not create tsp with no cities in route */
         if(route_->getCitiesNumber() == 0)
@@ -38,22 +40,28 @@ namespace calc
     {
         boost::mutex::scoped_lock lock(mutex_);
         if(state_ == NONE)
+        {
             state_ = QUEUED;
+            queuedNoSolve_ = true;
+        }
     }
 
     /* solve tsp on graph */
     void Tsp::solve()
     {
         boost::mutex::scoped_lock lock(mutex_);
-        if(state_ != NONE)
+        if(state_ != NONE && !(state_ == QUEUED && queuedNoSolve_))
             return;
+        
+        queuedNoSolve_ = false;
+        
         state_ = SOLVING;
         lock.unlock();
         
         
         TspGraph tsp_graph(route_->getCities()); // build graph
         PResult res = tsp_graph.optimizeRoute(); // get solution
-        
+
         lock.lock();
         result_ = res;        
         state_ = SOLVED;

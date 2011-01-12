@@ -63,6 +63,8 @@ namespace calc
             
             PResult result_; // Ptr to result
             
+            bool queuedNoSolve_;
+            
             mutable boost::mutex mutex_; // Mutex to control access to state and result
             
             mutable boost::condition_variable solvedCond_;             

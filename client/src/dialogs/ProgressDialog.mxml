@@ -2,103 +2,102 @@
 <s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
-			   width="400" height="150"
+			   width="400" height="124"
 			   title="solving"
 			   creationComplete="init()">
-	<fx:Script>
-		<![CDATA[
-			
-			import config.Config;
-			
-			import custom_events.CmdFinishedEvent;
-			
-			import mx.managers.PopUpManager;
-			import mx.rpc.events.ResultEvent;
-			import mx.rpc.remoting.mxml.RemoteObject;
-			
-			
-			private var remoteObj : RemoteObject = null;
-			private var timer : Timer;
-			private var tspId_ : int = 0;
-			private var timer_finalize : Boolean = false;
-			private var i : int = 0;
-			
-			private function init() : void 
-			{
-				remoteObj = new RemoteObject();
-				remoteObj.endpoint = Config.getInstance().getEndpoint();
-				remoteObj.destination = Config.getInstance().getDestination();
-				remoteObj.tspState.addEventListener("result", onTspState);
-				
-				timer = new Timer(1000); /* 1000ms == 1second */
-				timer.addEventListener(TimerEvent.TIMER, onTimer);
-			}
-			
-			//start to watch the command
-			public function startWatch( tsp_id : int ) : void 
-			{
-				this.tspId_ = tsp_id;
-				timer_finalize = false;
-				timer.start();
-			}
-			
-			private function onTimer(evt:TimerEvent) : void 
-			{
-				if(timer_finalize) 
-				{
-					var cmdFinishedEvent : CmdFinishedEvent = new CmdFinishedEvent(tspId_);
-					timer.stop();
-					dispatchEvent(cmdFinishedEvent);
-					PopUpManager.removePopUp(this);
-				}
-				else 
-				{
-					if(i == 100)
-						i = 0;
-					progress.setProgress(i, 100);
-					i += 10;
-					remoteObj.tspState(tspId_);
-				}
-			}
-			
-			//return information if command id in result is equal commaindId_ member
-			private function tspIdEqual(result : Object) : Boolean 
-			{
-				var tspId : Number = result.tsp_id as Number;
-				return tspId == tspId_;
-			}
-			
-			private function onTspState(re:ResultEvent) : void 
-			{
-				var result : Object = re.result as Object;
-				//check if progress for different job
-				if( !tspIdEqual( result ) ) return;
-				var ret_data : String = result.state as String;
-				progress.label = ret_data;
-				if( ret_data == "SOLVED" )
-				{
-					timer_finalize = true;
-				}				
-			}
-			
-			private function cancelClick() : void 
-			{
-				//remoteObj.breakCmd( commandId_ ); //TO BĘDZIE?
-			}
-			
-			
-		]]>
-	</fx:Script>
-	
-	<s:VGroup left="5" right="5" top="5" bottom="5">
-		<mx:ProgressBar id="progress" width = "100%" height="50%"
-						label="starting 0%"
+        <fx:Script>
+                <![CDATA[
+                        
+                        import config.Config;
+                        
+                        import custom_events.CmdFinishedEvent;
+                        
+                        import mx.managers.PopUpManager;
+                        import mx.rpc.events.ResultEvent;
+                        import mx.rpc.remoting.mxml.RemoteObject;
+                        
+                        
+                        private var remoteObj : RemoteObject = null;
+                        private var timer : Timer;
+                        private var tspId_ : int = 0;
+                        private var timer_finalize : Boolean = false;
+                        private var i : int = 0;
+                        
+                        private function init() : void 
+                        {
+                                remoteObj = new RemoteObject();
+                                remoteObj.endpoint = Config.getInstance().getEndpoint();
+                                remoteObj.destination = Config.getInstance().getDestination();
+                                remoteObj.tspState.addEventListener("result", onTspState);
+                                
+                                timer = new Timer(1000); /* 1000ms == 1second */
+                                timer.addEventListener(TimerEvent.TIMER, onTimer);
+                        }
+                        
+                        //start to watch the command
+                        public function startWatch( tsp_id : int ) : void 
+                        {
+                                this.tspId_ = tsp_id;
+                                timer_finalize = false;
+                                remoteObj.tspSolve(tspId_);
+                                timer.start();
+                        }
+                        
+                        private function onTimer(evt:TimerEvent) : void 
+                        {
+                                if(timer_finalize) 
+                                {
+                                        //var cmdFinishedEvent : CmdFinishedEvent = new CmdFinishedEvent(tspId_);
+                                        timer.stop();
+                                         dispatchEvent(new Event(Event.CHANGE));
+                                        PopUpManager.removePopUp(this);
+                                }
+                                else 
+                                {
+                                        if(i == 100)
+                                                i = 0;
+                                        progress.setProgress(i, 100);
+                                        i += 10;
+                                        remoteObj.tspState(tspId_);
+                                        
+                                }
+                        }
+                        
+                        //return information if command id in result is equal commaindId_ member
+                        private function tspIdEqual(result : Object) : Boolean 
+                        {
+                                var tspId : Number = result.tsp_id as Number;
+                                return tspId == tspId_;
+                        }
+                        
+                        private function onTspState(re:ResultEvent) : void 
+                        {
+//                                var result : Object = re.result as Object;
+//                                //check if progress for different job
+//                                if( !tspIdEqual( result ) ) return;
+//                                var ret_data : String = result.state as String;
+//                                progress.label = ret_data;
+//                                if( ret_data == "SOLVED" )
+//                                {
+//                                        timer_finalize = true;
+//                                }     
+
+                               //Tak jakby nigdy nie było wywoływane
+                               //Do tspState trzeba dodać id, coś nie działa
+                                var ret_data : String = re.result as String;
+                                progress.label = ret_data;
+                                if( ret_data == "SOLVED" )                                
+                                        timer_finalize = true;                                
+                        }
+      
+                ]]>
+        </fx:Script>
+        
+        <s:VGroup left="5" right="5" top="10" bottom="5" horizontalAlign="center">
+		<mx:ProgressBar id="progress" width = "100%" height="100%"
+						label="starting"
 						mode="manual" minimum="0" maximum="100" labelPlacement="center"  />
-		<mx:Spacer height="5%" />
-		<s:HGroup>
-			<s:Button id="cancel" label="cancel" click="cancelClick()"/>			
-		</s:HGroup>		
-	</s:VGroup>
-	
-	
+	</s:VGroup>	
+        
+        
 </s:TitleWindow>

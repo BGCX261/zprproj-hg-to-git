@@ -1,4 +1,5 @@
 #include "TspManager.hpp"
+#include <iostream>
 
 
 namespace calc
