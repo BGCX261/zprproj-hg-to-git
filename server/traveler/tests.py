@@ -1,7 +1,12 @@
+#############################
+# author: Bartosz Stalewski # 
+#############################
+
 from django.test import TestCase
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 import unittest
+import time
 from iface import *
 
 class CityTest(TestCase):
@@ -29,9 +34,8 @@ class CityTest(TestCase):
         badCity = City(name = 'Warsaw', xpos = 2, ypos = 2)
 
         #cities' names must be unique
-        with self.assertRaises(IntegrityError):
-            self.warsaw.save()
-            badCity.save()
+        self.warsaw.save()
+        self.failUnlessRaises(IntegrityError, badCity.save)
 
             
     def test03CityCoordsUniqueness(self):
@@ -42,9 +46,8 @@ class CityTest(TestCase):
         badCity = City(name = 'badCity', xpos = 30, ypos = 40)
 
         #cities' positions must be unique
-        with self.assertRaises(IntegrityError):
-            self.warsaw.save()
-            badCity.save()
+        self.warsaw.save()
+        self.failUnlessRaises(IntegrityError, badCity.save)
 
 
 
@@ -106,7 +109,7 @@ class RouteTest(TestCase):
         #the list is empty, home should be None
         self.clist.delCity(self.krakow)
         self.assertTrue(self.clist.empty())
-        self.assertIsNone(self.clist.homeCity)
+        self.assertEqual(self.clist.homeCity, None)
 
 
     def test03GetCities(self):
@@ -116,9 +119,11 @@ class RouteTest(TestCase):
 
         #checks if a list if cities can be properly obtained from
         #an empty and a nonempty lists
-        self.assertItemsEqual(self.clist.getCities(), [])
+        self.assertEqual(len(self.clist.getCities()), 0)
         self.clist.addCity(self.warsaw)
-        self.assertItemsEqual(self.clist.getCities(), [self.warsaw])
+
+        self.assertEqual(len(self.clist.getCities()), 1)
+        self.assertEqual(self.clist.getCities()[0], self.warsaw)
         
 
     def test04Home(self):
@@ -142,7 +147,7 @@ class RouteTest(TestCase):
         info = self.clist.getInfo()
         self.assertEqual(info['name'], 'clist')
         self.assertEqual(info['count'], 0)
-        self.assertItemsEqual(self.clist.getCitiesInfo(), [])
+        self.assertEqual(len(self.clist.getCitiesInfo()), 0)
 
         #test for a list with one city
         self.clist.addCity(self.warsaw)
@@ -164,7 +169,12 @@ class RouteTest(TestCase):
         self.assertEqual(info['count'], 2)
 
         #checks correctness of info of both cities
-        self.assertDictEqual(firstCity, self.clist.getCitiesInfo()[0])
+        firstCity = self.clist.getCitiesInfo()[0]
+        self.assertEqual(firstCity['name'], 'Warsaw')
+        self.assertEqual(firstCity['xpos'], 30)
+        self.assertEqual(firstCity['ypos'], 40)
+        self.assertEqual(firstCity['position'], 'home')
+
         secondCity = self.clist.getCitiesInfo()[1]
         self.assertEqual(secondCity['name'], 'Krakow')
         self.assertEqual(secondCity['xpos'], 25)
@@ -183,8 +193,8 @@ class InterfaceTest(TestCase):
 
         #checks City's uniqueness
         cid = addCity('Warsaw', 30, 40)
-        with self.assertRaises(IntegrityError):
-            addCity('Warsaw', 30, 40)
+        argz = {'name': 'Warsaw', 'x': 30, 'y': 40}
+        self.failUnlessRaises(IntegrityError, addCity, **argz)
 
         #checks if added City has proper attributes    
         warsaw = City.objects.get(id = cid)
@@ -195,8 +205,8 @@ class InterfaceTest(TestCase):
 
         #checks Route's uniqueness
         clid = addRoute('clist')
-        with self.assertRaises(IntegrityError):
-            addRoute('clist')
+        argz = {'name': 'clist'}
+        self.failUnlessRaises(IntegrityError, addRoute, **argz)
 
         #checks if an added list has proper attributes
         clist = Route.objects.get(id = clid)
@@ -231,16 +241,17 @@ class InterfaceTest(TestCase):
         warsaw = City(name = 'Warsaw', xpos = 30, ypos = 40, id = cid)
         warsaw.save()
         delCity(cid)
-        with self.assertRaises(ObjectDoesNotExist):
-            deletedCity = City.objects.get(id = cid)
+
+        argz = {'id' : cid}
+        self.failUnlessRaises(ObjectDoesNotExist, City.objects.get, **argz)
 
         #checks if a deleted citylist is 'ungettable'
         clid = 1
         clist = Route(name = 'clist', id = clid)
         clist.save()
         delRoute(clid)
-        with self.assertRaises(ObjectDoesNotExist):
-            deletedRoute = Route.objects.get(id = clid)
+        argz = {'id': clid}
+        self.failUnlessRaises(ObjectDoesNotExist, Route.objects.get, **argz)
 
         #checks if a deleted city from a list doesn't belong to it anymore
         warsaw = City(name = 'Warsaw', xpos = 30, ypos = 40, id = cid)
@@ -255,10 +266,9 @@ class InterfaceTest(TestCase):
         self.assertTrue(clist.empty())
 
         #checks if empty list's home is None
-        self.assertIsNone(clist.home)
+        self.assertEquals(clist.home, None)
         
 
-    #something's wrong with getCitiesInRoute method!!
     def test03GetMethods(self):
         """
         tests getters from interface
@@ -266,25 +276,33 @@ class InterfaceTest(TestCase):
 
         #checks if value returned by getCities() mtethod is correct
         #with no cities and with some cities
-        self.assertListEqual(getCities(), [])
+        self.assertEqual(len(getCities()), 0)
+
         cid1 = addCity('Warsaw', 30, 40)
         cid2 = addCity('Krakow', 25, 30)
         cities = [City.objects.get(id = cid1).getInfo(),
                    City.objects.get(id = cid2).getInfo()]
-        self.assertListEqual(getCities(), cities)
+        allCities = getCities()
+        self.assertEqual(len(allCities), 2)
+        self.assertEqual(allCities[0], cities[0])
+        self.assertEqual(allCities[1], cities[1])
 
         #checks if citylists returned by getRoutes() are correct
         #for an empty citylist and a nonempty city list
-        self.assertItemsEqual(getRoutes(), [])
+        self.assertEqual(len(getRoutes()), 0)
+
         clid1 = addRoute('clist1')
         clid2 = addRoute('clist2')
         citiesRoutes = [Route.objects.get(id = clid1).getInfo(),
                        Route.objects.get(id = clid2).getInfo()]
-        self.assertListEqual(getRoutes(), citiesRoutes)
+        allRoutes = getRoutes()
+        self.assertEqual(len(allRoutes), 2)
+        self.assertEqual(citiesRoutes[0], allRoutes[0])
+        self.assertEqual(citiesRoutes[1], allRoutes[1])
 
         #checks if a list of cities returned by getCitiesInRoute()
         #is correct when citylist is empty and when it contains some cities
-        self.assertListEqual(getCitiesInRoute(clid1), [])
+        self.assertEqual(len(getCitiesInRoute(clid1)), 0)
         
         addCityToRoute(clid1, cid1)
         addCityToRoute(clid1, cid2)
@@ -294,13 +312,19 @@ class InterfaceTest(TestCase):
         krakowInfo = City.objects.get(id = cid2).getInfo()
         krakowInfo['position'] = 'middle'
         cities = [warsawInfo, krakowInfo]
-        self.assertListEqual(getCitiesInRoute(clid1), cities)
+
+        routeCities = getCitiesInRoute(clid1)
+        self.assertEqual(len(routeCities), 2)
+        self.assertEqual(routeCities[0], cities[0])
+        self.assertEqual(routeCities[1], cities[1])
 
         #checks if a list of cities is still correct after deleting one city
         delCityFromRoute(clid1, cid1)
         krakowInfo['position'] = 'home'
         cities = [krakowInfo]
-        self.assertListEqual(getCitiesInRoute(clid1), cities)
+        routeCities = getCitiesInRoute(clid1)
+        self.assertEqual(len(routeCities), len(cities))
+        self.assertEqual(routeCities[0], cities[0])
 
 
     def test04SetHome(self):
@@ -330,76 +354,68 @@ class InterfaceTest(TestCase):
         self.assertEqual(krakow, clist.home)
         warsawInfo = warsaw.getInfo()
         warsawInfo['position'] = 'middle'
-        self.assertIn(warsawInfo, getCitiesInRoute(clid))
+        krakowInfo = krakow.getInfo()
+        krakowInfo['position'] = 'home'
+        self.assertEqual(warsawInfo, getCitiesInRoute(clid)[1])
+        self.assertEqual(krakowInfo, getCitiesInRoute(clid)[0])
 
 
-#    def test05TspSolve(self):
+    def test05TspSolve(self):
 	"""
 	Tests methods responsible for the algorithm execution.
 	"""
-"""		
+		
 	#checks if algorithm may be executed for routes that doesn't exist
 		
 	falseRouteId = 31 #no route has such id
-	with self.assertRaises(ObjectDoesNotExist):
-		tspSolve(falseRouteId)
+        self.failUnlessRaises(ObjectDoesNotExist, tspSolve, falseRouteId)
 
 	#checks if state of tsp that doesn't exist can be checked
 	falseTspId = 31   #no tsp has such id
-        with self.assertRaises(AttributeError):
-        	tspState(falseTspId)
-
+        self.failUnlessRaises(AttributeError, tspState, falseTspId)
 
 	#checks if algorithm can be executed for empty routes
 	emptyRoute = addRoute('emptyRoute')
-        #ponizsza linijka powoduje Segmentation Faulta
-	emptyTspId = tspSolve(emptyRoute)
-	emptyTspRes = tspResult(emptyTspId)
+	self.failUnlessRaises(RuntimeError, tspSolve, emptyRoute)
 
-	rid = addRoute('route1')
+	rid = addRoute('rname')
 	cid1 = addCity('Warsaw', 30, 40)
 	cid2 = addCity('Krakow', 25, 30)
 	cid3 = addCity('Wroclaw', 20, 30)
 	addCityToRoute(rid, cid1)
 	addCityToRoute(rid, cid2)
 	addCityToRoute(rid, cid3)
-	tspId = tspSolve(rid)
+        routeSize = 3
+	
+	tspSolve(rid)
 
 	#checks if state of tsp is correct
-	self.assertIn(tspState(tsp_id), ['QUEUED', 'SOLVING', 'SOLVED'])
-	time.sleep(0.5)
-	self.assertEquals(tspState(tspId), 'SOLVED')
+	state = tspState(rid)
+	self.failUnless(state=='QUEUED')
+	time.sleep(0.2)
+#????	self.assertEqual(tspState(rid), 'SOLVED')
 
 	#checks if tsp's attributes have proper values
-	tsp = Tsps().getTsp(tspId)
-	self.assertEqual(tsp.routeId, 2)
-	self.assertEqual(tsp.getState(), TspState.SOLVED)
+	#tsp = Tsps().getTsp(rid)
+	#self.assertEqual(tsp.routeId, 2)
+#????	self.assertEqual(tsp.getState(), TspState.SOLVED)
 
-	self.assertEqual(tspId, 1)
+	self.assertEqual(rid, 2)
 
-	tsp = Tsps().getTsp(tspId)
-	result = tsp.getResult()
-	result2 = tspResult(tspId)
+        tspSolve(rid)
+        time.sleep(0.2)
+
+        #tu blad
+        result = tspResult(rid)
 
 	#checks if correct value(list of cities) is returned from tspResult
-	self.assertEqual(result, result2)
-	route = Route.objects.get(id = tsp.routeId)
+	route = Route.objects.get(id = rid)
 	cities = route.getCities()
+	self.assertEqual(len(cities), routeSize)
 	for i in result:
 		city = City.objects.get(id = i)
-		self.assertIn(city, cities)
-		
-	self.assertIsNone(Tsps().getTsp(tsp_id))
+		self.assertEqual(cities.count(city), 1)
 	
-	#checks if next added route has proper attributes
-	rid2 = addRoute('route2')
-	addCityToRoute(rid2, cid1)
-	tspId2 = tspSolve(rid2)
-
-	tsp = Tsps().getTsp(tspId2)
-	self.assertEqual(tsp.routeId, 3)
-	self.assertEqual(tspId2, 2)
-"""	
         
 
 if __name__=='__main__':
