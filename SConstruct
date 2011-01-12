@@ -46,14 +46,14 @@ Help(opts.GenerateHelpText(env) )
 #set flags etc
 if(platform.system() == "Linux"):
     env.Append( CPPFLAGS = '-Wall -pedantic -pthread' )
-    env.Append( CPPPATH = ['${python_headers}'] )
-    env.Append( LIBPATH = ['${python_libs}'] )
+    env.Append( CPPPATH = [env.Dir('${python_headers}')] )
+    env.Append( LIBPATH = [env.Dir('${python_libs}')] )
     env.Append( LIBS = [ 'boost_thread', 'boost_python', 'boost_graph' ] )        
     env.Append( LINKFLAGS = '-Wall -pthread -Wl,-soname,' + CALC_LIB_NAME )
 elif(platform.system() == "Windows"):
 	env.Append( CPPFLAGS = ['/EHsc', '/MDd'] )
-	env.Append( CPPPATH = [ Dir('$boost_path'), Dir('$python_headers') ] )
-	env.Append( LIBPATH = [ Dir('$boost_libs'), Dir('$python_libs') ] )
+	env.Append( CPPPATH = [ env.Dir('$boost_path'), env.Dir('$python_headers') ] )
+	env.Append( LIBPATH = [ env.Dir('$boost_libs'), env.Dir('$python_libs') ] )
 	env.Append( CPPDEFINES=['_CONSOLE'])    
 
 def create_sources_paths(build_dir, src_files):
@@ -91,9 +91,9 @@ def build_calc_tests( env, calc_build_dir, calc_tests_build_dir ):
 
     calc_tests_sources =  create_sources_paths(calc_tests_build_dir, ['test.cpp'])
     sources = calc_tests_sources + create_sources_paths(calc_build_dir, calc_sources)
-    
+    print sources
     et.Program(target = CALC_LIB_NAME + '-test', source = sources)
 
 
 build_calc(env, 'build/calc/')
-build_calc_tests(env, 'build/calc/', 'build/test/')
+#build_calc_tests(env, 'build/calc/', 'build/test/')
