@@ -1,3 +1,5 @@
+# author: Rafal Witowski
+
 from models import City, Route
 from calc import Tsp, TspManager, TspState
 from tsps import Tsps

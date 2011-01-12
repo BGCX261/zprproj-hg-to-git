@@ -1,3 +1,5 @@
+// author: Rafał Witowski
+
 #ifndef CALC_ROUTE_HPP
 #define CALC_ROUTE_HPP
 

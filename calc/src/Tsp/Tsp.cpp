@@ -1,3 +1,5 @@
+// author: Rafał Witowski
+
 #include "Tsp.hpp"
 #include "TspGraph.hpp"
 #include <iostream>

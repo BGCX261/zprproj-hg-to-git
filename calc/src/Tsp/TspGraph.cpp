@@ -1,3 +1,5 @@
+// author: Rafał Witowski
+
 #include "TspGraph.hpp"
 
 #include <vector>

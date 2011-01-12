@@ -1,4 +1,4 @@
-// author: Witowski Rafał
+// author: Rafał Witowski
 
 #ifndef CALC_CITY_HPP
 #define CALC_CITY_HPP

@@ -1,3 +1,6 @@
+// author: Rafał Witowski
+
+
 #include <boost/python.hpp>
 
 #include "TspPy/TspPy.hpp"

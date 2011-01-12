@@ -1,3 +1,5 @@
+# author: Rafal Witowski
+
 from django.db import models
 from math import sqrt
 

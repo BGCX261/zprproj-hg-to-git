@@ -1,3 +1,5 @@
+// author: Rafał Witowski
+
 #ifndef CALC_TSP_GRAPH_HPP
 #define CALC_TSP_GRAPH_HPP
 

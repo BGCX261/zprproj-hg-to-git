@@ -1,3 +1,5 @@
+# author: Rafal Witowski
+
 class Tsps:
 
     instance_ = None

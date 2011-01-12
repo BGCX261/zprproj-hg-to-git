@@ -1,3 +1,5 @@
+// author: Rafal Witowski
+
 #ifndef CALC_TSP_EXCEPTION_HPP
 #define CALC_TSP_EXCEPTION_HPP
 

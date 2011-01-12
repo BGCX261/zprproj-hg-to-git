@@ -1,3 +1,5 @@
+# author: Rafal Witowski
+
 import os, sys, platform, re
 import distutils.sysconfig
 import SCons.Builder
@@ -143,24 +145,17 @@ def build_client( env, build_dir ):
 if tests == '1':
     #tworzy link do biblioteki bez numeru wersji
     if(platform.system() == "Linux"):
-        link_file = 'server/'+CALC_LIB_FILE_NAME
-        os.link(CALC_LIB_FILE_NAME, link_file)    
         os.system('./calc-test')
         os.system(python_name +' server/config/manage.py test')
-        os.remove(link_file)
     else:
         os.system('calc-test');
         os.system('python server/config/manage.py test')
         
 elif run == '1':
     if(platform.system() == "Linux"):
-        link_file = 'server/'+CALC_LIB_FILE_NAME 
-        os.link(CALC_LIB_FILE_NAME, link_file)
         os.system('firefox http://127.0.0.1:8000/traveler/client/client.html&')
         os.system(python_name +' server/config/manage.py runserver')
-        os.remove(link_file)        
     else:
-        lib = shutil.copy(CALC_LIB_FILE_NAME + '.dll', CALC_LIB_NAME + '.pyd')
         os.system('start python server\\config\\manage.py runserver')
         os.system('\"c:\\Program Files\\Mozilla Firefox\\firefox.exe\" http://127.0.0.1:8000/traveler/client/client.html')
         

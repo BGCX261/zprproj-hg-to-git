@@ -1,3 +1,5 @@
+// author: Rafał Witowski
+
 #include "TspQueue.hpp"
 
 

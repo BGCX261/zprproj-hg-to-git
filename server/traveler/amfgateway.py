@@ -1,3 +1,5 @@
+# author: Rafal Witowski
+
 from pyamf.remoting.gateway.django import DjangoGateway
 import iface
 

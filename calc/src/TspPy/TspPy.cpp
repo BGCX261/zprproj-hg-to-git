@@ -1,3 +1,5 @@
+// author: Rafał Witowski
+
 #include "TspPy.hpp"
 
 namespace calc
