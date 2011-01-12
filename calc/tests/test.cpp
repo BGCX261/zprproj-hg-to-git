@@ -158,10 +158,6 @@ BOOST_AUTO_TEST_CASE( tspTest )
 	tsp.setQueued();
 	BOOST_CHECK_EQUAL( tsp.getState(), Tsp::QUEUED );
 
-	// check if solve does not change not NONE state
-	tsp.solve();
-	BOOST_CHECK_EQUAL( tsp.getState(), Tsp::QUEUED );
-
 	Tsp tsp2(pRoute);
 	tsp2.solve();
 
