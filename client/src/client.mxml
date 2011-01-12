@@ -36,7 +36,11 @@
                         private var routesArray_ : Array;
                         
                         [Bindable]
-                        private var routeCitiesArray_ : Array = null;
+                        private var routeCitiesArray_ : Array = new Array();
+                        
+                        [Bindable]
+                        private var lastRouteId_ : int = -1;                    
+        
                         
                         private function init() : void
                         {
@@ -62,6 +66,7 @@
                                 remoteObject.getCitiesInRoute.addEventListener("result", onGetRouteCities);
                                 remoteObject.delCityFromRoute.addEventListener("result", onDelCityFromRoute);
                                 remoteObject.addCityToRoute.addEventListener("result", onAddCityToRoute);
+                                //remoteObject.tspSolve.addEventListener("result", onTspSolve);
                                 remoteObject.tspResult.addEventListener("result", onTspResult);
                                 remoteObject.setHomeCity.addEventListener("result", onSetHomeCity);
                                 remoteObject.addEventListener("fault", onFault);
@@ -181,7 +186,7 @@
                         
                         private function optimizeClick() : void
                         {
-                                //remoteObject.tspSolve( routesGetSelected().id );
+                               // remoteObject.tspSolve( routesGetSelected().id );
                                 
                                 var dialog : ProgressDialog = new ProgressDialog();
                                 dialog.addEventListener(Event.CHANGE, showResult );
@@ -202,11 +207,36 @@
                         private function deleteRouteClick() : void
                         {
                             remoteObject.delRoute(routesGetSelected().id);
-                        }                                       
+                        }
+                        
+                        private function selectRoute(id : int) : Boolean
+                        {
+                            if(id < 0)
+                                return false;
+                                
+                            for(var i : int = 0; i < routesArray_.length; ++i)
+                            {
+                                if(routesArray_[i].id == id)
+                                {
+                                    routes.selectedIndex = i;
+                        routes.validateNow();
+                        routes.scrollToIndex(i);
+                        return true;
+                                }
+                            }
+                            return false;
+                        }
                         
                         private function onGetRoutes(re:ResultEvent) : void
                         {
                                 routesArray_ = re.result as Array;
+                if(!selectRoute(lastRouteId_))
+                {
+                    routeCities.dataProvider.removeAll();
+                    routeCities.invalidateDisplayList()
+                    lastRouteId_ = -1
+                }
+
                                 updateRoutesSelection();
                         }
                         
@@ -217,7 +247,6 @@
                         
 //                        private function onTspSolve(re:ResultEvent) : void
 //                        {
-//                        	Alert.show("want to play");
 //                                var tsp_id : int = re.result as int;
 //                                var dialog : ProgressDialog = new ProgressDialog();
 //                                dialog.addEventListener(CmdFinishedEvent.TYPE, showResult );
@@ -225,36 +254,39 @@
 //                                PopUpManager.centerPopUp(dialog);
 //                                
 //                                dialog.startWatch( tsp_id );
-//           			}
+//            }
                         
                         private function RouteListChange() : void
                         {
                 updateRoutesSelection();
                                 sendCitiesOnRouteRefresh(null);
+                                
+                if(routesGetSelected() != null)
+                    lastRouteId_ = routesGetSelected().id
+                else            
+                    lastRouteId_ = -1                   
                         }
 
                         
                         private function showResult(re:ResultEvent) : void
                         {
-                        	var route_id : int = re.result as int;
-                        	remoteObject.tspResult(route_id);
+                        	//coś się wali
+                              //var route_id : int = re.result as int;
+                        	//RemoteObject.tspResult(route_id);
                         }
                         
-                        private function RouteCitiesChange() : void
-                        {
-                updateRouteCitiesSelection();                   
-                        }
-                        
-                        private function onTspResult(re:ResultEvent) : void
+                         private function onTspResult(re:ResultEvent) : void
                         {
                         	//wyswietl wynik
                         }
+                        
+
                                                 
                         //////////////////////////////////////////////////////////////////////////////////////////////////////
                                         
                         private function routeCitiesGetSelected() : Object
                         {
-                            if(routeCitiesArray_ == null) return null;
+                            //if(routeCitiesArray_ == null) return null;
                             return routeCitiesArray_[routeCities.selectedIndex];
                         }       
                         
@@ -311,15 +343,18 @@
                         private function onAddCityToRoute(re:ResultEvent) : void
                         {
                                 sendCitiesOnRouteRefresh(null);
-                               // var selectedRouteId : int = routes.selectedIndex;
                                 sendRoutesRefresh(null);
-                                routes.selectedIndex 1;
                         }
                         
                         private function onSetHomeCity(re:ResultEvent) : void
                         {
                                 sendCitiesOnRouteRefresh(null);
                 sendRoutesRefresh(null);                                                                                                
+                        }                       
+                        
+                        private function RouteCitiesChange() : void
+                        {
+                updateRouteCitiesSelection();
                         }                       
                         
 

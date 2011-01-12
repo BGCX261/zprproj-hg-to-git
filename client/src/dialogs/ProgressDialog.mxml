@@ -59,6 +59,7 @@
                                         progress.setProgress(i, 100);
                                         i += 10;
                                         remoteObj.tspState(tspId_);
+                                        timer.stop();
                                         
                                 }
                         }
@@ -87,7 +88,8 @@
                                 var ret_data : String = re.result as String;
                                 progress.label = ret_data;
                                 if( ret_data == "SOLVED" )                                
-                                        timer_finalize = true;                                
+                                        timer_finalize = true;
+                                timer.start();                                
                         }
       
                 ]]>
