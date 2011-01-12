@@ -1,11 +1,19 @@
-import os, platform
+import os, sys, platform
 import distutils.sysconfig
 
-so_ext = distutils.sysconfig.get_config_var('SO')		
-
-
-
 CALC_LIB_NAME = 'calc'
+
+calc_sources = [
+    'CalcPy.cpp',
+    'Tsp/Route.cpp',
+    'Tsp/Tsp.cpp',
+    'Tsp/TspGraph.cpp',
+    'Tsp/TspQueue.cpp',
+    'Tsp/TspManager.cpp',
+    'TspPy/TspPy.cpp',
+]   
+
+python_version = platform.python_version_tuple()
 
 #check if we support this platform
 if(platform.system() != 'Linux' and platform.system() != 'Windows'):
@@ -13,18 +21,22 @@ if(platform.system() != 'Linux' and platform.system() != 'Windows'):
     exit()
 
 #set variables
-opts = Variables()
+opts = Variables('custom.py')
 if(platform.system() == "Linux"):
-    opts.Add(PathVariable('python_headers', 'python headers directory', '/usr/include/python2.7',PathVariable.PathIsDir))
-    opts.Add(PathVariable('python_libs',    'python libraries directory', '/usr/lib/python2.7',PathVariable.PathIsDir))    
+    opts.Add(PathVariable('python_headers', 'python headers directory', distutils.sysconfig.get_python_inc(), PathVariable.PathIsDir))
+    opts.Add(PathVariable('python_libs',    'python libraries directory', distutils.sysconfig.get_python_lib(standard_lib = True), PathVariable.PathIsDir))    
 elif(platform.system() == "Windows"):
     opts.Add(PathVariable('python_headers', 'python headers directory', 'C:/Python26/include',PathVariable.PathIsDir))
     opts.Add(PathVariable('python_libs',    'python libraries directory', 'C:/Python26/libs',PathVariable.PathIsDir))        
+    
+    opts.Add(PathVariable('boost_path',     'boost directory', 'C:/Program Files (x86)/boost/boost_1_44',PathVariable.PathIsDir))
+    opts.Add(PathVariable('boost_libs',     'boost libs directory', '$boost_path'+'/lib',PathVariable.PathIsDir))     
 
 #create environment
 if(platform.system() == "Linux"):
     env = Environment(variables=opts)
 else:
+    #force 32bit build on windows
     env = Environment(variables=opts, TARGET_ARCH='x86')
 
 
@@ -35,71 +47,53 @@ Help(opts.GenerateHelpText(env) )
 if(platform.system() == "Linux"):
     env.Append( CPPFLAGS = '-Wall -pedantic -pthread' )
     env.Append( CPPPATH = ['${python_headers}'] )
-    env.Append( LINKFLAGS = '-Wall -pthread -Wl,-soname,' + CALC_LIB_NAME )
     env.Append( LIBPATH = ['${python_libs}'] )
-    env.Append( LIBS = [ 'boost_thread', 'boost_python', 'boost_graph' ] )
+    env.Append( LIBS = [ 'boost_thread', 'boost_python', 'boost_graph' ] )        
+    env.Append( LINKFLAGS = '-Wall -pthread -Wl,-soname,' + CALC_LIB_NAME )
 elif(platform.system() == "Windows"):
 	env.Append( CPPFLAGS = ['/EHsc', '/MDd'] )
-	env.Append( CPPPATH = [ Dir('C:/Program Files (x86)/boost/boost_1_44'), Dir('$python_headers') ] )
-	env.Append( LIBPATH = [ Dir('C:/Program Files (x86)/boost/boost_1_44/lib'), Dir('$python_libs') ] )
+	env.Append( CPPPATH = [ Dir('$boost_path'), Dir('$python_headers') ] )
+	env.Append( LIBPATH = [ Dir('$boost_libs'), Dir('$python_libs') ] )
 	env.Append( CPPDEFINES=['_CONSOLE'])    
-	#env.Append( LINKFLAGS = ['/MANIFEST'] )  
+
+def create_sources_paths(build_dir, src_files):
+    return [build_dir + f for f in src_files]
 
 
-
-def prepare_src_files( build_dir, src_files):
-    src_compilation = []
-    for f in src_files:
-        src_compilation.append(build_dir + f)
-    return src_compilation
-
-
-def build_shared( env, build_dir):
+def build_calc( env, build_dir):
     e = env.Clone()
-    if(platform.system() == "Windows"):
+
+    e['SHLIBPREFIX']=''
+    e['SHLIBSUFFIX']=distutils.sysconfig.get_config_var('SO')       
+     		 
+    pld = str(e.Dir('$python_libs'))
+    if(platform.system() == "Linux"):
+        e.Append( LIBS = [os.path.basename(pld)] )    		 
+    else:
+        #force static boost python linkage, this is the only way to get it working
         e.Append( CPPDEFINES=['BOOST_PYTHON_STATIC_LIB', 'BOOST_PYTHON_DYNAMIC_MODULE'])
-        e['SHLIBSUFFIX']=so_ext	
 
     e.VariantDir( build_dir, 'calc/src/', duplicate = 0)
-    files_cpp = [
-        'CalcPy.cpp',
-        'Tsp/Route.cpp',
-        'Tsp/Tsp.cpp',
-        'Tsp/TspGraph.cpp',
-        'Tsp/TspQueue.cpp',
-        'Tsp/TspManager.cpp',
-        'TspPy/TspPy.cpp',
-    ]
 
-    s = e.SharedLibrary(SHLIBPREFIX='', target=CALC_LIB_NAME, source=prepare_src_files(build_dir, files_cpp))
-						
-    #e.AddPostAction(s, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+    s = e.SharedLibrary(target=CALC_LIB_NAME, source=create_sources_paths(build_dir, calc_sources))						
 
-def build_tests( env, build_dir ):
+def build_calc_tests( env, calc_build_dir, calc_tests_build_dir ):
     et = env.Clone()
-#    et.Prepend( LIBS = [CALC_LIB_NAME] )
+    pld = str(et.Dir('$python_libs'))    
     if(platform.system() == "Linux"):
-        et.Append( LIBS = ['python2.7', 'boost_unit_test_framework'] )
-    elif(platform.system() == "Windows"):
+        et.Append( LIBS = [os.path.basename(pld), 'boost_unit_test_framework'] )
+    else:
         et.Append( LINKFLAGS = ' /SUBSYSTEM:CONSOLE ' )
 
-    et.VariantDir( build_dir, 'calc/', duplicate = 0)
-#   rozwiazanie chwilowe
-    files_cpp = [
-        'src/CalcPy.cpp',
-        'src/Tsp/Route.cpp',
-        'src/Tsp/Tsp.cpp',
-        'src/Tsp/TspGraph.cpp',
-        'src/Tsp/TspQueue.cpp',
-        'src/Tsp/TspManager.cpp',
-        'src/TspPy/TspPy.cpp',
-        'tests/test.cpp'
-    ]
-    et.Program(target = 'testCpp',
-               source = prepare_src_files(build_dir, files_cpp))
-#    et.Program(target = 'testCpp',
-#              source = prepare_src_files(build_dir, ['test.cpp']))
+    et.VariantDir( calc_build_dir, 'calc/src', duplicate = 0)
+    et.VariantDir( calc_tests_build_dir, 'calc/tests', duplicate = 0)    
 
 
-build_shared(env, 'build/calc/')
-build_tests(env, 'build/test/')
+    calc_tests_sources =  create_sources_paths(calc_tests_build_dir, ['test.cpp'])
+    sources = calc_tests_sources + create_sources_paths(calc_build_dir, calc_sources)
+    
+    et.Program(target = CALC_LIB_NAME + '-test', source = sources)
+
+
+build_calc(env, 'build/calc/')
+build_calc_tests(env, 'build/calc/', 'build/test/')
